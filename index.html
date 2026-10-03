@@ -1001,7 +1001,35 @@ function taskState(id){
   return S.task[id];
 }
 
+/* A stage is locked until the one before it is cleared. Keeps the Candy-Crush
+   progression honest instead of letting everything be clickable. */
+function isUnlocked(i){
+  if(i<=0)return true;
+  return !!S.done[M[i-1].id];
+}
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='toast';
+    t.style.cssText='position:fixed;left:50%;bottom:22px;transform:translateX(-50%);'+
+      'background:#2c323f;border:3px solid #4e5561;padding:11px 16px;font-size:11px;'+
+      'letter-spacing:1px;text-transform:uppercase;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.5);'+
+      'opacity:0;pointer-events:none;transition:.2s;z-index:70;max-width:92vw;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.style.opacity='1';
+  t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(toast._h);
+  toast._h=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(14px)';},2600);
+}
 function openStage(i,keepTask){
+  if(!isUnlocked(i)){
+    const prev=M[i-1];
+    toast('Clear '+prev.id+' '+prev.n+' first');
+    return;
+  }
   openIdx=i; const m=M[i], d=document.getElementById('detail');
   document.getElementById('mZone').textContent='ZONE '+m.z+' · '+Z[m.z].name;
   document.getElementById('mTitle2').textContent=m.id+' '+m.n;
@@ -1096,9 +1124,12 @@ function drawRoom(){
   if(os)os.onclick=()=>{ S.done[m.id]=false; save(); drawRoom(); drawMission(); drawDash(); };
   const fn=document.getElementById('rmFinish');
   if(fn)fn.onclick=()=>{
+    const left=tasks.filter((_,x)=>!st[x]).length;
+    if(left>0){
+      toast(left+' task'+(left===1?'':'s')+' still open — finish them or reopen the stage later');
+      return;
+    }
     S.done[m.id]=true;
-    const st2=taskState(m.id);
-    tasks.forEach((_,x)=>{st2[x]=true;});
     m.res.forEach((_,x)=>{S.res[resKey(m,x)]=true;});
     S.log.unshift({t:new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,5),x:'CLEARED '+m.id+' '+m.n});
     save(); closeStage();
@@ -1121,7 +1152,7 @@ document.getElementById('mNext').onclick=()=>{
 };
 document.getElementById('bReset').onclick=()=>{
   if(!confirm('Wipe all progress, cleared resources, notes and logbook on this device?'))return;
-  S={done:{},res:{},notes:{},log:[],last:null,streak:0,seen:null}; save(); render();
+  S={done:{},res:{},notes:{},log:[],task:{},last:null,streak:0,seen:null}; save(); render();
 };
 document.getElementById('bExport').onclick=()=>{
   const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
