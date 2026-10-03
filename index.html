@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Roadmap</title>
+<meta name="description" content="Interactive cybersecurity learning roadmap">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%235a3d1e'/><rect width='16' height='5' fill='%236aa84f'/></svg>">
+<style>
+:root{
+  --grass:#6aa84f; --grass-d:#4a7534; --dirt:#8b5a2b; --dirt-d:#5e3c1c;
+  --stone:#8f8f8f; --stone-d:#6b6b6b; --coal:#333; --obsidian:#2b2440;
+  --diamond:#4dd0d8; --gold:#f2c14e; --redstone:#c0392b; --water:#3a7bd5;
+  --ink:#e8e8e8; --mute:#9a9a9a; --panel:#1b1b1f; --panel2:#232329;
+  --edge-l:rgba(255,255,255,.22); --edge-d:rgba(0,0,0,.55);
+  --px: 3px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:#14141a; color:var(--ink);
+  font-family:"Courier New",ui-monospace,Menlo,Consolas,monospace;
+  font-size:14px; line-height:1.5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size:32px 32px;
+  min-height:100vh;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px 90px}
+h1,h2,h3{text-shadow:2px 2px 0 rgba(0,0,0,.75); letter-spacing:1px}
+h1{font-size:20px;margin:0}
+h2{font-size:15px;margin:0 0 10px; text-transform:uppercase}
+h3{font-size:13px;margin:0 0 8px; text-transform:uppercase}
+a{color:var(--diamond);text-decoration:none}
+a:hover{color:#fff}
+button{font-family:inherit;cursor:pointer}
+img{image-rendering:pixelated}
+
+/* ---------- Minecraft block ---------- */
+.blk{
+  background:var(--panel2);
+  border-top:var(--px) solid var(--edge-l);
+  border-left:var(--px) solid var(--edge-l);
+  border-right:var(--px) solid var(--edge-d);
+  border-bottom:var(--px) solid var(--edge-d);
+  box-shadow:0 0 0 1px #000;
+}
+.btn{
+  background:#3a3a42; color:var(--ink); border:0;
+  border-top:3px solid #6a6a75; border-left:3px solid #6a6a75;
+  border-right:3px solid #1a1a1e; border-bottom:3px solid #1a1a1e;
+  padding:7px 11px; font-size:12px; text-transform:uppercase; letter-spacing:.5px;
+}
+.btn:hover{background:#4a4a55; color:#fff}
+.btn:active{border-top-color:#1a1a1e;border-left-color:#1a1a1e;border-right-color:#6a6a75;border-bottom-color:#6a6a75}
+.btn.pri{background:var(--grass);border-top-color:#8fc96d;border-left-color:#8fc96d;color:#0d1a08}
+.btn.pri:hover{background:var(--grass-d)}
+
+/* ---------- top bar ---------- */
+header{
+  background:linear-gradient(#2e2e36,#232329);
+  border-bottom:4px solid #000; padding:14px 0 12px; margin-bottom:18px;
+  box-shadow:0 4px 0 rgba(0,0,0,.4);
+}
+.hrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{
+  width:38px;height:38px;flex:0 0 38px;
+  background:var(--dirt);
+  border-top:3px solid #b57a45;border-left:3px solid #b57a45;
+  border-right:3px solid #4a2f14;border-bottom:3px solid #4a2f14;
+  position:relative; box-shadow:0 0 0 2px #000;
+}
+.logo::before{content:"";position:absolute;inset:0 0 auto 0;height:9px;background:var(--grass);
+  border-bottom:3px solid var(--grass-d)}
+.hstats{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.chip{
+  background:#111116;border:2px solid #000;padding:5px 9px;font-size:11.5px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.chip b{color:var(--gold)}
+.chip.g b{color:var(--grass)}
+.chip.d b{color:var(--diamond)}
+
+/* ---------- progress ---------- */
+.pbar{height:22px;background:#0c0c10;border:3px solid #000;position:relative;margin:14px 0 6px}
+.pbar>i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--grass) 0 8px,var(--grass-d) 8px 10px);transition:width .3s}
+.pbar>span{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;text-shadow:2px 2px 0 #000}
+
+/* ---------- mission card ---------- */
+.mission{
+  background:linear-gradient(#2a2418,#1f1b12);
+  border-top:3px solid var(--gold);border-left:3px solid var(--gold);
+  border-right:3px solid #000;border-bottom:3px solid #000;
+  padding:14px;margin-bottom:20px;box-shadow:0 0 0 2px #000;
+}
+.mission .tag{color:var(--gold);font-size:10.5px;letter-spacing:2px;text-transform:uppercase}
+.mission h2{margin:6px 0 8px;text-transform:none;letter-spacing:0;font-size:17px}
+.mission p{margin:0 0 12px;color:#d8d0bc}
+.mission .go{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ---------- grid ---------- */
+.cols{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.panel{padding:14px;margin-bottom:18px}
+.panel>.hd{
+  display:flex;align-items:center;gap:9px;margin:-14px -14px 12px;padding:10px 14px;
+  background:#2c2c34;border-bottom:3px solid #000;
+}
+.panel>.hd .ic{width:20px;height:20px;flex:0 0 20px}
+
+/* ---------- stage map ---------- */
+.map{
+  position:relative; width:100%; height:800px;
+  background:
+    linear-gradient(#2f4a2a,#2a4026);
+  border:3px solid #000;
+}
+.map::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,0,0,.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.16) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+#trail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.node{
+  position:absolute;transform:translate(-50%,-50%);z-index:3;
+  width:62px;height:62px;padding:0;
+  border-top:4px solid #7a7a85;border-left:4px solid #7a7a85;
+  border-right:4px solid #1c1c20;border-bottom:4px solid #1c1c20;
+  display:grid;place-items:center;box-shadow:0 0 0 3px #000;
+}
+.node .n{font-size:19px;font-weight:bold;text-shadow:2px 2px 0 #000}
+.node.done{background:var(--grass);border-top-color:#9fd47f;border-left-color:#9fd47f}
+.node.cur{background:var(--gold);border-top-color:#ffe08a;border-left-color:#ffe08a;animation:pulse 1.4s infinite}
+.node.lock{background:#4a4a52;color:#7c7c86}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px #000,0 0 0 0 rgba(242,193,78,.7)}50%{box-shadow:0 0 0 3px #000,0 0 0 14px rgba(242,193,78,0)}}
+.node .lockic{position:absolute;right:-6px;bottom:-6px;width:20px;height:20px}
+.nlabel{
+  position:absolute;transform:translate(-50%,0);z-index:2;
+  font-size:9.5px;text-align:center;width:120px;left:50%;top:66px;
+  text-shadow:2px 2px 0 #000;pointer-events:none;color:#e2e2e2;line-height:1.25;
+}
+.nlabel b{display:block;font-size:11px;color:#fff}
+.zone{
+  position:absolute;z-index:1;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.5);text-shadow:2px 2px 0 #000;
+}
+
+/* ---------- stage detail ---------- */
+.detail{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:50;display:none;padding:20px;overflow:auto}
+.detail.on{display:block}
+.dbox{
+  max-width:720px;margin:40px auto;background:var(--panel);
+  border-top:4px solid var(--grass);border-left:4px solid var(--grass);
+  border-right:4px solid #000;border-bottom:4px solid #000;box-shadow:0 0 0 3px #000;
+}
+.dhd{display:flex;align-items:center;gap:12px;padding:14px;background:#2c2c34;border-bottom:3px solid #000}
+.dhd .x{margin-left:auto}
+.dbody{padding:16px}
+.dbody h3{margin-top:16px}
+.dbody h3:first-child{margin-top:0}
+.out{margin:0;padding:0;list-style:none}
+.out li{padding:4px 0 4px 20px;position:relative;font-size:13px;color:#d0d0d8}
+.out li::before{content:"\25B6";position:absolute;left:0;color:var(--grass);font-size:9px;top:7px}
+
+/* ---------- icon link grid ---------- */
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px}
+.ilink{
+  background:#2a2a32;border:0;padding:9px 4px 7px;
+  border-top:3px solid #55555f;border-left:3px solid #55555f;
+  border-right:3px solid #15151a;border-bottom:3px solid #15151a;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  color:var(--ink);text-decoration:none;text-align:center;
+}
+.ilink:hover{background:#383843;color:#fff}
+.ilink:active{border-top-color:#15151a;border-left-color:#15151a;border-right-color:#55555f;border-bottom-color:#55555f}
+.ilink.used{background:#22331f;border-top-color:#4a7534;border-left-color:#4a7534;opacity:.75}
+.ilink.used::after{content:"DONE";font-size:8px;color:var(--grass);letter-spacing:1px}
+.ilink svg{width:26px;height:26px}
+.ilink span{font-size:9px;line-height:1.15;max-width:66px;word-break:break-word}
+.hint{color:var(--mute);font-size:11px;margin:8px 0 0}
+
+/* ---------- list rows ---------- */
+.rows{display:flex;flex-direction:column;gap:6px}
+.row{display:flex;align-items:center;gap:10px;padding:8px;background:#202027;border-left:3px solid #3a3a44}
+.row.done{border-left-color:var(--grass);background:#1a2418}
+.row.now{border-left-color:var(--gold);background:#241f14}
+.row .t{font-size:12.5px}
+.row.done .t{color:var(--mute);text-decoration:line-through}
+.row .r{margin-left:auto;font-size:11px;color:var(--mute)}
+.kv{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #2c2c34;font-size:12px}
+.kv:last-child{border-bottom:0}
+.kv b{color:var(--gold)}
+.kv.dim{color:var(--mute)}
+.foot{margin-top:26px;padding-top:14px;border-top:3px solid #000;color:var(--mute);font-size:11px}
+.warn{background:#2b1414;border-left:3px solid var(--redstone);padding:9px 11px;margin:10px 0;font-size:12px;color:#f0c8c4}
+.ok{background:#1a2418;border-left:3px solid var(--grass);padding:9px 11px;margin:10px 0;font-size:12px;color:#c8e6c0}
+select,input[type=text]{
+  background:#111116;color:var(--ink);border:3px solid #000;padding:6px 9px;font-family:inherit;font-size:12px;
+}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:#0c0c10}
+::-webkit-scrollbar-thumb{background:#3a3a44;border:2px solid #000}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <div class="hrow">
+      <div class="logo"></div>
+      <div>
+        <h1>CYBER ROADMAP</h1>
+        <div style="color:var(--mute);font-size:11px;margin-top:3px">SOC ANALYST PATH &middot; 6 ZONES &middot; 17 STAGES &middot; 780 HOURS</div>
+      </div>
+      <div class="hstats">
+        <div class="chip g">Stage <b id="sStage">1/17</b></div>
+        <div class="chip g">Done <b id="sDone">0</b></div>
+        <div class="chip d">Hours <b id="sHrs">0/780</b></div>
+        <div class="chip">Streak <b id="sStreak">0</b></div>
+        <div class="chip">Zone <b id="sZone">0</b></div>
+      </div>
+    </div>
+    <div class="pbar"><i id="pfill" style="width:0"></i><span id="ptext">0%</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="mission blk">
+    <div class="tag" id="mTag">Next Objective</div>
+    <h2 id="mTitle">Loading</h2>
+    <p id="mBody">&nbsp;</p>
+    <div class="go">
+      <button class="btn pri" id="mGo">Open Stage</button>
+      <button class="btn" id="mNext">Skip Resource</button>
+      <span class="hint" id="mHint">&nbsp;</span>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <div class="panel blk">
+        <div class="hd">
+          <span class="ic" data-ic="map"></span>
+          <h2 style="margin:0">Stage Map</h2>
+          <span style="margin-left:auto" class="hint" id="mapHint">click a node</span>
+        </div>
+        <div class="map" id="map">
+          <svg id="trail" viewBox="0 0 1000 800" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel blk">
+        <div class="hd"><span class="ic" data-ic="check"></span><h2 style="margin:0">Checklist</h2></div>
+        <div class="rows" id="rows"></div>
+      </div>
+
+      <div class="panel blk">
+        <div class="hd"><span class="ic" data-ic="chart"></span><h2 style="margin:0">Dashboard</h2></div>
+        <div class="kv"><span>Stages complete</span><b id="kDone">0 / 17</b></div>
+        <div class="kv"><span>Hours logged</span><b id="kHrs">0 / 780</b></div>
+        <div class="kv"><span>Resources cleared</span><b id="kRes">0</b></div>
+        <div class="kv"><span>Current zone</span><b id="kZone">0 Foundations</b></div>
+        <div class="kv"><span>Zone progress</span><b id="kZprog">0%</b></div>
+        <div class="kv"><span>Last session</span><b id="kLast">never</b></div>
+        <div class="kv"><span>Est. finish @4h/day</span><b id="kEta">~6 months</b></div>
+        <div class="kv"><span>GitHub repos (live)</span><b id="kRepos">fetching</b></div>
+      </div>
+
+      <div class="panel blk">
+        <div class="hd"><span class="ic" data-ic="bulb"></span><h2 style="margin:0">Field Notes</h2></div>
+        <div id="notes"></div>
+        <div class="hint" style="margin-top:10px">Notes save on this device. Back them up to the vault before clearing browser data.</div>
+      </div>
+
+      <div class="panel blk" style="border-top-color:var(--gold)">
+        <div class="hd" style="background:#2a2210;border-bottom-color:#000">
+          <span class="ic" data-ic="radar" style="color:var(--gold)"></span>
+          <h2 style="margin:0;color:var(--gold)">Coach</h2>
+          <span style="margin-left:auto" class="hint" id="cHint"></span>
+        </div>
+        <div style="background:#12100a;padding:12px;border-left:3px solid var(--gold);border-right:3px solid #000;border-bottom:3px solid #000" id="coach">
+        </div>
+      </div>
+
+      <div class="panel blk">
+        <div class="hd"><span class="ic" data-ic="book"></span><h2 style="margin:0">Logbook</h2>
+          <span style="margin-left:auto" class="hint" id="logCount"></span></div>
+        <div id="logbook" style="max-height:220px;overflow:auto"></div>
+      </div>
+
+      <div class="panel blk">
+        <div class="hd"><span class="ic" data-ic="cog"></span><h2 style="margin:0">Settings</h2></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="bExport">Export Save</button>
+          <button class="btn" id="bImport">Import Save</button>
+          <button class="btn" id="bReset">Reset All</button>
+        </div>
+        <div class="hint" style="margin-top:8px">Progress lives in this browser only. Export before you clear cache or switch machines.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Every resource link machine-verified 2026-10-02. Progress autosaves on every click &mdash; you never edit a file.
+  </div>
+</div>
+
+<div class="detail" id="detail">
+  <div class="dbox">
+    <div class="dhd">
+      <span id="mIcon" data-ic="stage"></span>
+      <div>
+        <div style="color:var(--gold);font-size:10.5px;letter-spacing:2px" id="mZone">ZONE</div>
+        <h2 style="margin:2px 0 0;text-transform:none;letter-spacing:0" id="mTitle2">Title</h2>
+      </div>
+      <button class="btn x" id="dClose">Close</button>
+    </div>
+    <div class="dbody">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+        <button class="btn pri" id="mDoneBtn">Mark Stage Complete</button>
+        <span class="hint" id="mHrs">0 hours</span>
+      </div>
+      <h3>Can Do When Finished</h3>
+      <ul class="out" id="mOut"></ul>
+      <h3>Resources</h3>
+      <div class="icons" id="dTiles"></div>
+      <p class="hint">Tap a tile to open it and mark it cleared. Cleared tiles turn green and the next objective moves on by itself.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ ICONS ============ */
+const P={
+ network:'<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3.2a6.8 6.8 0 110 13.6 6.8 6.8 0 010-13.6z"/><circle cx="12" cy="12" r="2.6"/>',
+ terminal:'<path d="M3 4h18v16H3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M11 15h5" fill="none" stroke="currentColor" stroke-width="2"/>',
+ code:'<path d="M8 6l-6 6 6 6M16 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/>',
+ lock:'<path d="M7 10V7a5 5 0 0110 0v3h1a1 1 0 011 1v9H6v-9a1 1 0 011-1zm2 0h6V7a3 3 0 00-6 0z"/>',
+ key:'<path d="M14 3a6 6 0 00-5.7 8L2 17.3V22h4.7l1-1v-2h2v-2h2l1.6-1.6A6 6 0 1014 3zm2 5.2a1.8 1.8 0 110-3.6 1.8 1.8 0 010 3.6z"/>',
+ server:'<path d="M3 4h18v6H3zM3 14h18v6H3z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="7" r="1.4"/><circle cx="7" cy="17" r="1.4"/>',
+ shield:'<path d="M12 2l8 3.5V12c0 5-3.4 8.9-8 10-4.6-1.1-8-5-8-10V5.5z"/>',
+ radar:'<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 110 12 6 6 0 010-12z"/><path d="M12 12l6.5-6.5" stroke="#14141a" stroke-width="1.6"/>',
+ bug:'<path d="M8 8a4 4 0 018 0v6a4 4 0 01-8 0zm-3 3v2H3v-2zm18 0h2v2h-2zM5 6l1.8 1.8L5.4 9.2 3.6 7.4zM19 6l1.4 1.4-1.4 1.4L17.2 7.8z"/>',
+ cloud:'<path d="M6.5 19a4.5 4.5 0 01-.4-9A6 6 0 0118 9.5 4.8 4.8 0 0117.5 19z"/>',
+ flag:'<path d="M5 3v18h2v-7h11l-2-4 2-4H7V3z"/>',
+ trophy:'<path d="M7 4h10v5a5 5 0 01-10 0zm-3 1h2v3a4 4 0 01-2-3zm14 0h2a4 4 0 01-2 3zM11 14h2v4h3v2H8v-2h3z"/>',
+ search:'<path d="M10 3a7 7 0 015.9 10.6L21 18.7 18.7 21l-5.1-5.1A7 7 0 1110 3zm0 2a5 5 0 100 10 5 5 0 000-10z"/>',
+ book:'<path d="M4 3h7v18H4zm9 0h7v18h-7z"/>',
+ cpu:'<path d="M8 8h8v8H8z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 3v3M14 3v3M10 18v3M14 18v3M3 10h3M3 14h3M18 10h3M18 14h3" stroke="currentColor" stroke-width="2"/>',
+ db:'<path d="M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3zm-8 6v5c0 1.7 3.6 3 8 3s8-1.3 8-3V9c-1.7 1.2-4.8 2-8 2s-6.3-.8-8-2zm0 8v2c0 1.7 3.6 3 8 3s8-1.3 8-3v-2c-1.7 1.2-4.8 2-8 2s-6.3-.8-8-2z"/>',
+ globe:'<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm7 6h-3a15 15 0 00-1.4-3.6A8 8 0 0119 8zM12 4.1c.8 1 1.5 2.3 1.8 3.9h-3.6c.3-1.6 1-2.9 1.8-3.9zM4.3 14a8 8 0 010-4h3.3a17 17 0 000 4zm.8 2h3a15 15 0 001.4 3.6A8 8 0 015.1 16zm3-8h-3a8 8 0 014.4-3.6A15 15 0 008.1 8zM12 19.9c-.8-1-1.5-2.3-1.8-3.9h3.6c-.3 1.6-1 2.9-1.8 3.9zm2.3-5.9H9.7a15 15 0 010-4h4.6a15 15 0 010 4zm.5 5.5a15 15 0 001.4-3.6h3a8 8 0 01-4.4 3.6zm1.9-5.5a17 17 0 000-4h3.3a8 8 0 010 4z"/>',
+ activity:'<path d="M3 12h4l3-8 4 16 3-8h4" fill="none" stroke="currentColor" stroke-width="2"/>',
+ sword:'<path d="M20 3l-9 9-2-2 9-9zM7 13l4 4-6 6H3v-2z"/>',
+ users:'<path d="M8 11a4 4 0 100-8 4 4 0 000 8zm8 0a3 3 0 100-6 3 3 0 000 6zM8 13c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4zm8 .5c-.7 0-1.4.1-2 .3 1.3 1.1 2 2.4 2 3.7v1.5h6v-2c0-2-2.4-3.5-6-3.5z"/>',
+ check:'<path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/>',
+ map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2zm0 2.2l6 2v9.6l-6-2z"/>',
+ chart:'<path d="M4 20V10h4v10zm6 0V4h4v16zm6 0v-7h4v7z"/>',
+ bulb:'<path d="M12 2a6 6 0 00-3.5 10.9V16h7v-3.1A6 6 0 0012 2zM9.5 18h5v2h-5z"/>',
+ cog:'<path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2-1.2.3-2.3-2.2-1L15.4 5 13 5.6 12 3.5 11 5.6 8.6 5l-1.7 2.5-2.2 1L5 7.5 3 8.7l1.6 1.8L3 12l1.6 1.5L5 15.3l2.2 1 1.7 2.5 2.4-.6 1 2.1 1-2.1 2.4.6 1.7-2.5 2.2-1 .3-2.3z"/>',
+ stage:'<path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/>'
+};
+function ico(n,s){return '<svg viewBox="0 0 24 24" fill="currentColor">'+(P[n]||P.stage)+'</svg>'}
+document.querySelectorAll('[data-ic]').forEach(e=>{e.innerHTML=ico(e.dataset.ic); if(e.tagName==='svg')e.setAttribute('fill','currentColor')});
+document.querySelectorAll('span.ic').forEach(e=>e.innerHTML=ico(e.dataset.ic));
+
+/* ============ DATA ============ */
+const Z=[
+ {n:0,name:'FOUNDATIONS',h:130,blk:'var(--grass)',why:'Networking first. Every serious thread agrees you cannot do security without it.'},
+ {n:1,name:'SECURITY CORE',h:115,blk:'var(--diamond)',why:'What you defend, before you learn to attack or detect.'},
+ {n:2,name:'OFFENSE',h:120,blk:'var(--dirt)',why:'You cannot detect what you cannot recognise.'},
+ {n:3,name:'DEFENSE',h:135,blk:'var(--obsidian)',why:'The job phase. Heaviest on purpose: this is what gets you hired.'},
+ {n:4,name:'ADVANCED',h:130,blk:'var(--stone)',why:'Only after SOC skills are solid.'},
+ {n:5,name:'PROFESSIONAL',h:150,blk:'var(--gold)',why:'Documentation. Cert last, portfolio first.'}
+];
+const M=[
+ {id:'M0.1',z:0,n:'Network Fundamentals',h:40,ic:'network',out:['Read a packet capture without a guide','Explain OSI vs TCP-IP and map protocols to both','Subnet a /24 by hand, then a /16','Explain a DNS lookup step by step','Use Wireshark filters in an investigation'],res:[['Cisco Networking Basics','https://www.netacad.com/courses/networking-basics','globe'],['Cisco Intro to Cybersecurity','https://www.netacad.com/courses/introduction-to-cybersecurity','shield'],['Messer Network+','https://www.professormesser.com/network-plus/','book'],['THM Pre-Security','https://tryhackme.com/path/outline/presecurity','terminal'],['MDN HTTP Guide','https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview','code'],['Packet Tracer','https://www.netacad.com/courses/packet-tracer','network']]},
+ {id:'M0.2',z:0,n:'Linux and Shell',h:45,ic:'terminal',out:['Survive a bare terminal','Write and read bash scripts','Manage users, services, permissions, logs','Use grep, awk, sed, find on real data','Know what lives in /etc, /var/log, /proc'],res:[['OverTheWire Bandit','https://overthewire.org/wargames/bandit/','cpu'],['THM Linux Fundamentals','https://tryhackme.com/path/outline/linuxfundamental1','terminal'],['Linux Journey','https://linuxjourney.com/','book'],['The Linux Command Line','https://linuxcommand.org/tlcl.php','file'],['MIT Missing Semester','https://missing.csail.mit.edu/','users']]},
+ {id:'M0.3',z:0,n:'Scripting Python and Bash',h:45,ic:'code',out:['Write a script that parses a log and flags anomalies','Automate a repetitive task with bash','Parse PCAP or JSON evidence programmatically','Call an API safely with requests'],res:[['Automate the Boring Stuff','https://automatetheboringstuff.com/','code'],['Python for Everybody','https://www.coursera.org/specializations/python','book'],['Hackerrank Python','https://www.hackerrank.com/domains/python','cpu'],['PyMitre ATT&CK','https://github.com/mitre-attack/mitreattack-python','sword'],['Your Repos','https://github.com/Diavolo148888','users']]},
+ {id:'M1.1',z:1,n:'Principles and CIA',h:30,ic:'shield',out:['Explain CIA, AAA, least privilege, defence in depth','Write a real risk register','Map controls to NIST CSF 2.0','Separate threat, vuln, exploit, risk with examples'],res:[['NIST CSF 2.0','https://www.nist.gov/cyberframework','book'],['NIST SP 800-61','https://csrc.nist.gov/pubs/sp/800/61/r2/final','book'],['MITRE ATT&CK','https://attack.mitre.org/','sword'],['OWASP Top 10','https://owasp.org/www-project-top-ten/','shield'],['THM Pre-Security','https://tryhackme.com/path/outline/presecurity','terminal']]},
+ {id:'M1.2',z:1,n:'Cryptography',h:35,ic:'key',out:['Symmetric vs asymmetric vs hashing, and when each applies','Explain a TLS handshake end to end','Read an X.509 cert and check its chain','Explain why ECB is broken and why salt matters'],res:[['CryptoHack','https://cryptohack.org/','lock'],['CryptoPals','https://www.cryptopals.com/','lock'],['NIST SP 800-131A','https://csrc.nist.gov/pubs/sp/800/131/a/r2/final','book'],['SSL Labs','https://www.ssllabs.com/ssltest/','globe']]},
+ {id:'M1.3',z:1,n:'System Administration',h:50,ic:'server',out:['Install and harden a Linux box from scratch','Manage Windows services, RDP, local admin','Stand up a safe lab VM network','Read event logs and know a normal baseline'],res:[['THM Windows Fundamentals','https://tryhackme.com/path/outline/windowfundamentals','server'],['Microsoft Learn','https://learn.microsoft.com/en-us/training/','book'],['Practical DevOps','https://practical-devops.com/','cog'],['CyberDefenders','https://cyberdefenders.org/','activity']]},
+ {id:'M2.1',z:2,n:'Methodology and Recon',h:40,ic:'search',out:['Run a full recon sweep end to end','Write rules of engagement before testing','Build a repeatable enumeration checklist','Report findings with severity and impact'],res:[['THM Recon and OSINT','https://tryhackme.com/path/outline/osint','search'],['Shodan','https://www.shodan.io/','globe'],['crt.sh','https://crt.sh/','search'],['Exploit-DB','https://www.exploit-db.com/','bug'],['OWASP WSTG','https://owasp.org/projects/web-security-testing-guide','book']]},
+ {id:'M2.2',z:2,n:'Web Application Security',h:45,ic:'globe',out:['Run a PortSwigger lab end to end and explain each stage','Demonstrate SQLi, XSS, IDOR, SSRF, broken auth','Test an API for BOLA and mass assignment','Map an OWASP Top 10 entry to a real CVE'],res:[['PortSwigger Academy','https://portswigger.net/web-security','globe'],['OWASP Juice Shop','https://github.com/juice-shop/juice-shop','server'],['DVWA','https://github.com/digininja/DVWA','server'],['WebGoat','https://github.com/WebGoat/WebGoat','server'],['OWASP Cheat Sheets','https://cheatsheetseries.owasp.org/','book']]},
+ {id:'M2.3',z:2,n:'Exploitation and Pivoting',h:35,ic:'sword',out:['Explain overflow, ret2libc, ASLR bypass conceptually','Pivot between networks with SSH and SOCKS','Use Metasploit in a lab and read every output line','Escalate on Linux and Windows in labs'],res:[['THM Exploit and Pivoting','https://tryhackme.com/path/outline/20daysofinternals','sword'],['CyLab picoGym','https://cylabacademy.org/','cpu'],['VulnHub','https://www.vulnhub.com/','server'],['HTB Starting Point','https://app.hackthebox.com/','flag']]},
+ {id:'M3.1',z:3,n:'SOC and SIEM',h:50,ic:'radar',out:['Write KQL that hunts real techniques','Build a working detection from scratch','Triage an alert and write a defensible writeup','Explain SOC tiers, SLAs, escalation'],res:[['CyberDefenders','https://cyberdefenders.org/','activity'],['Blue Team Labs','https://blueteamlabs.online/','shield'],['LetsDefend','https://letsdefend.io/','radar'],['Splunk BOTS','https://www.splunk.com/en_us/products/splunk-enterprise.html','chart'],['Elastic Security','https://www.elastic.co/security','activity'],['MITRE ATT&CK','https://attack.mitre.org/','sword']]},
+ {id:'M3.2',z:3,n:'Windows and Active Directory',h:45,ic:'users',out:['Read a Security log and spot the attack','Explain Kerberos, NTLM, LDAP, GPO abuse plainly','Enumerate a domain like a real pentester','Explain kerberoasting and pass-the-hash'],res:[['THM AD Domain','https://tryhackme.com/path/outline/windowserver2019','server'],['WADComs','https://wadcoms.github.io/','book'],['adsecurity.org','https://adsecurity.org/','shield'],['MS Learn SC-900','https://learn.microsoft.com/en-us/training/','book'],['Blue Team Labs','https://blueteamlabs.online/','users']]},
+ {id:'M3.3',z:3,n:'Firewall and IDS',h:40,ic:'activity',out:['Write firewall rules and explain rule order','Deploy Suricata with a rule and explain the alert','Segment a network and explain blast radius','Tell IDS false positives from real ones'],res:[['Suricata 8 Docs','https://docs.suricata.io/en/suricata-8.0.0/quickstart.html','radar'],['Wireshark Filters','https://www.wireshark.org/docs/wsug_html_chunked/','search'],['Zeek Docs','https://docs.zeek.org/en/current/','cpu'],['CIS Benchmarks','https://www.cisecurity.org/cis-benchmarks','book'],['OTRF Datasets','https://github.com/OTRF/Set-AuditRule','db']]},
+ {id:'M4.1',z:4,n:'Malware Analysis',h:45,ic:'bug',out:['Triage statically: strings, imports, hashes, packers','Analyse dynamically in a sandbox safely','Read a Cobalt Strike config from a PCAP','Extract IOCs and write an intel report'],res:[['ANY.RUN Sandbox','https://any.run/','bug'],['VirusTotal','https://www.virustotal.com/gui/home','shield'],['Practical Malware Analysis','https://practicalmalwareanalysis.com/','book'],['SANS Malware Start','https://www.sans.org/blog/how-you-can-start-learning-malware-analysis','users'],['CyberDefenders','https://cyberdefenders.org/','activity']]},
+ {id:'M4.2',z:4,n:'Cloud Security',h:40,ic:'cloud',out:['Enumerate a cloud account for misconfiguration','Explain IAM, least privilege, public exposure','Fix a public bucket and prove it with a re-scan','Explain shared responsibility limits'],res:[['AWS Skill Builder','https://skillbuilder.aws/','cloud'],['AWS Docs','https://docs.aws.amazon.com/','book'],['MS Learn Azure','https://learn.microsoft.com/en-us/training/','cloud'],['Google Skills','https://www.skills.google/','cloud'],['Terraform Tutorials','https://developer.hashicorp.com/terraform/tutorials','cog']]},
+ {id:'M4.3',z:4,n:'CTF and Bug Bounty',h:45,ic:'flag',out:['Hold a weekly lab streak for three months','Submit a real in-scope bounty report','Write three public writeups from your own recon','Reproduce a bug class from a public report'],res:[['HackerOne Programs','https://hackerone.com/directory','flag'],['Bugcrowd','https://www.bugcrowd.com/hackers/','flag'],['HackTheBox','https://app.hackthebox.com/','server'],['CyLab Academy','https://cylabacademy.org/','cpu'],['US Cyber Challenge','https://www.uscyberchallenge.org/','trophy'],['Hackerrank Security','https://www.hackerrank.com/domains/security','shield']]},
+ {id:'M5.1',z:5,n:'Certs Resume and Job Hunt',h:60,ic:'trophy',out:['Pass exactly one cert, not four attempts','Write a one page resume that leads with proof','Pass eight mock interviews','Track thirty applications a week'],res:[['Messer SY0-701','https://www.professormesser.com/security-plus/','book'],['Google Cyber Cert','https://www.coursera.org/professional-certificates/google-cybersecurity','trophy'],['MS Learn Credentials','https://learn.microsoft.com/en-us/credentials/','trophy'],['LinkedIn PH','https://ph.linkedin.com/','users']]},
+ {id:'M5.2',z:5,n:'Portfolio and GitHub',h:90,ic:'users',out:['Every repo has a README with threat model and demo','Site lists each project with screenshot and impact','Ten or more public writeups','A recruiter understands it in 30 seconds'],res:[['Your GitHub','https://github.com/Diavolo148888','users'],['Your Site','https://diavolo148888.github.io/','globe'],['CyberDefenders Profile','https://cyberdefenders.org/','activity'],['README Guide','https://www.freecodecamp.org/news/how-to-structure-your-readme-file/','book'],['GitHub Pages','https://pages.github.com/','globe']]}
+];
+const TIPS={
+ 'M0.1':['Subnet by hand before touching any tool. If you cannot split a /24 in your head, Wireshark will just be noise.','Download Packet Tracer and build a three router network this week.'],
+ 'M0.2':['Do OverTheWire Bandit in order. Skipping levels is why people get stuck at level 20.','Set up a Ubuntu VM now. Everything in Zone 1 and 2 needs it.'],
+ 'M0.3':['Write one script that reads a real log. One script beats ten tutorials.','Add tests and a README to a tool you already shipped.'],
+ 'M1.1':['Write the risk register about your own laptop. Concrete beats abstract.','Learn the ATT&CK tactic names. You will use them daily in Zone 3.'],
+ 'M1.2':['Do CryptoPals set 1 by hand, no libraries. The point is seeing the math.','Run your own portfolio through SSL Labs and read every downgrade.'],
+ 'M1.3':['Harden SSH on a VM and document every change you made.','Build one deliberately vulnerable box on a host-only network.'],
+ 'M2.1':['Recon is the whole game. Rushed recon is why people get stuck in shells.','Run a full recon sweep on your own site and write it up.'],
+ 'M2.2':['PortSwigger Apprentice labs first. Do not skip to the exploit, read each stage.','Stand up Juice Shop locally and fix fifteen findings.'],
+ 'M2.3':['Never run these outside a lab you own or have written permission for.','Write the walkthrough while you solve, not after.'],
+ 'M3.1':['This is the phase that gets you hired. Give it the hours.','Memorise event IDs 4624, 4625, 4688, 4648, 4104, 7045 by name.','Complete fifteen CyberDefenders challenges.'],
+ 'M3.2':['Stand up a real AD domain. Reading about Kerberos is not the same as using it.','For every event ID you learn, find it in a real log and justify the triage call.'],
+ 'M3.3':['Firewall rule order matters more than rule content. Learn why.','Write three Suricata rules and trigger each one yourself.'],
+ 'M4.1':['Static triage first. Opening a sample is the last step, not the first.','Every analysis ends with an IOC list someone can action.'],
+ 'M4.2':['Enumerate your own free tier account like an attacker would.','Always re-scan after a fix to prove it stuck.'],
+ 'M4.3':['Pick one program and go deep rather than five programs shallow.','Bounty income needs a public trail, so write everything up.'],
+ 'M5.1':['One cert. Pass it. Repeating attempts cost more than the exam.','Security+ is HR filter insurance, not a substitute for hands-on.'],
+ 'M5.2':['You already ship twelve tools. They are invisible until each has a README.','Write the writeup the same day you finish the lab.']
+};
+const NOTES=[
+ ['ISC2 CC free program is CLOSED','isc2.org page source reads "Program Closed". Any roadmap still recommending it as a free cert is out of date.'],
+ ['cyberdefenders.com is a trap','That domain is a parked spam page. The real site is cyberdefenders.org.'],
+ ['CyberAces was retired in 2023','Use US Cyber Challenge for free CTFs and camps instead.'],
+ ['Skip Network+ if you do CCNA','Forums consider it redundant. Pick one path, not both.'],
+ ['Certs without XP are worthless','XP without documentation is invisible. Write every lab up, that fixes both.'],
+ ['Buy nothing until Zone 0 is done','TryHackMe free tier has 650+ rooms. You may never need to pay.']
+];
+
+/* ============ STATE ============ */
+const K='cyberroad.v2';
+let S={done:{},res:{},notes:{},log:[],last:null,streak:0,seen:null};
+try{const r=localStorage.getItem(K); if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+/* keep the shape valid if an older save is loaded */
+if(typeof S.done!=='object'||!S.done)S.done={};
+if(typeof S.res!=='object'||!S.res)S.res={};
+if(typeof S.notes!=='object'||!S.notes)S.notes={};
+if(!Array.isArray(S.log))S.log=[];
+const save=()=>{S.last=new Date().toISOString(); try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+/* ---------- favicon for each resource tile ---------- */
+/* derive a hostname from a full URL, then ask Google for that site's icon */
+function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return '';}}
+function fav(u){
+  const h=hostOf(u);
+  if(!h) return ico('globe');
+  return '<img src="https://www.google.com/s2/favicons?domain='+encodeURIComponent(h)+'&sz=64" alt="" '+
+         'style="width:26px;height:26px;image-rendering:auto" '+
+         'onerror="this.outerHTML=\''+ico('globe').replace(/'/g,"\\'")+'\'">';
+}
+
+/* ---------- resource key ---------- */
+const resKey=(m,i)=>m.id+':'+i;
+
+/* ============ MAP GEOMETRY ============ */
+/* MAP_H must match the CSS .map height. 5 winding rows of 5 nodes. */
+const MAP_H=800;
+const COLS=5, SLOT=[];
+(function(){for(let row=0;row<5;row++){for(let c=0;c<COLS;c++){
+  const leftToRight = row%2===0;
+  SLOT.push({x:10+ (leftToRight? c: (COLS-1-c))*20, y:44+row*180});
+}}})();
+
+/* ============ RENDER ============ */
+function firstIncomplete(){return M.findIndex(m=>!S.done[m.id])}
+function stats(){
+  const d=M.filter(m=>S.done[m.id]);
+  return {done:d.length,total:M.length,hrs:d.reduce((a,m)=>a+m.h,0),totalHrs:M.reduce((a,m)=>a+m.h,0),
+    res:Object.values(S.res).filter(Boolean).length,
+    resTotal:M.reduce((a,m)=>a+m.res.length,0)};
+}
+function curStage(){const i=firstIncomplete(); return i<0?M.length-1:i}
+
+function drawMap(){
+  const map=document.getElementById('map'), svg=document.getElementById('trail');
+  map.querySelectorAll('.zone,.node,.nlabel').forEach(e=>e.remove());
+  const ci=curStage();
+  // zone bands
+  let zl='';
+  const counts=[0,0,0,0,0,0]; M.forEach(m=>counts[m.z]++);
+  let idx=0;
+  Z.forEach((z,zi)=>{
+    const n=counts[zi]; if(!n)return;
+    const top=SLOT[idx].y-58, bot=SLOT[idx+n-1].y+58;
+    zl+=`<div class="zone" style="left:10px;top:${(top/MAP_H*100).toFixed(2)}%;">${z.name} &middot; ${z.h}H</div>`;
+    idx+=n;
+  });
+  // trail path
+  let d='', prev=null;
+  SLOT.forEach((s,i)=>{
+    const X=(s.x/100*1000), Y=(s.y/MAP_H*800);
+    if(!prev) d+=`M ${X} ${Y}`;
+    else{const px=prev.x/100*1000, py=prev.y/MAP_H*800;
+      const mx=(px+X)/2; d+=` C ${mx} ${py}, ${mx} ${Y}, ${X} ${Y}`;}
+    prev=s;
+  });
+  svg.innerHTML=`<path d="${d}" fill="none" stroke="#000" stroke-width="26" stroke-linecap="round" opacity=".45"/>
+    <path d="${d}" fill="none" stroke="#c9b98a" stroke-width="16" stroke-linecap="round" stroke-dasharray="10 8"/>`;
+  // nodes
+  let nl='';
+  M.forEach((m,i)=>{
+    const s=SLOT[i], dn=S.done[m.id];
+    const state=dn?'done':(i===ci?'cur':'lock');
+    const p=1+i/M.length, fill=dn?'var(--grass)':(i<=ci?'#6b5a2e':'#3a3a42');
+    nl+=`<button class="node ${state}" data-i="${i}" style="left:${s.x}%;top:${(s.y/MAP_H*100).toFixed(3)}%;background:${fill}"
+      title="${m.id} ${m.n}">${ico(m.ic).replace('<svg','<svg width="30" height="30"')}
+      ${(!dn&&i>ci)?`<span class="lockic">${ico('lock')}</span>`:''}</button>
+      <div class="nlabel" style="left:${s.x}%;top:${((s.y+34)/MAP_H*100).toFixed(3)}%"><b>${m.id}</b>${m.n}</div>`;
+  });
+  map.insertAdjacentHTML('beforeend', zl+nl);
+  map.querySelectorAll('.node').forEach(b=>b.onclick=()=>openStage(+b.dataset.i));
+}
+
+function drawRows(){
+  const box=document.getElementById('rows'); box.innerHTML='';
+  M.forEach((m,i)=>{
+    const st=stOf(m.id);
+    const r=document.createElement('button');
+    r.className='row '+st;
+    r.style.cssText='text-align:left;width:100%;border:0;border-right:3px solid #15151a;border-bottom:3px solid #15151a;border-top:3px solid #55555f;cursor:pointer;font-family:inherit;color:inherit';
+    r.innerHTML=`<span style="width:18px;flex:0 0 18px;color:${st==='done'?'var(--grass)':'var(--mute)'}">${ico(st==='done'?'check':m.ic).replace('<svg','<svg width="16" height="16"')}</span>
+      <span><span class="t">${m.n}</span><br><span style="font-size:10px;color:var(--mute)">${m.id} &middot; ${Z[m.z].name}</span></span>
+      <span class="r">${m.h}h</span>`;
+    r.onclick=()=>openStage(i);
+    box.appendChild(r);
+  });
+}
+function stOf(id){
+  if(S.done[id])return 'done';
+  return (M.find(m=>m.id===id)&&firstIncomplete()>-1&&M[firstIncomplete()]===M.find(m=>m.id===id))?'now':'';
+}
+
+function drawMission(){
+  const i=firstIncomplete();
+  const t=document.getElementById('mTitle'), b=document.getElementById('mBody'),
+        tag=document.getElementById('mTag'), hint=document.getElementById('mHint');
+  if(i<0){
+    tag.textContent='Campaign Complete';
+    t.textContent='All 17 stages cleared';
+    b.textContent='Every stage is done. Update your resume, apply, and start hunting bounties on your own targets.';
+    hint.textContent='nothing left to unlock';
+    document.getElementById('mNext').style.display='none';
+    return;
+  }
+  document.getElementById('mNext').style.display='';
+  const m=M[i], z=Z[m.z];
+  // find first uncleared resource in this stage
+  let ri=m.res.findIndex((_,k)=>!S.res[resKey(m,k)]);
+  if(ri<0) ri=0;
+  const rr=m.res[ri];
+  tag.textContent='Zone '+m.z+' &middot; '+z.name+' &middot; Objective '+(i+1)+' of '+M.length;
+  t.textContent=m.id+' '+m.n;
+  const cleared=m.res.filter((_,k)=>S.res[resKey(m,k)]).length;
+  b.textContent=(TIPS[m.id]?TIPS[m.id][0]+' ':'')+(cleared>0?'Resources cleared here: '+cleared+' of '+m.res.length+'. ':'')+
+    'Right now: '+rr[0]+'. Estimated '+m.h+' hours for the whole stage.';
+  hint.textContent='auto-advances as you clear tiles';
+  window.__openRes=rr[1];
+}
+
+function drawDash(){
+  const s=stats(), ci=curStage();
+  document.getElementById('sStage').textContent=(ci+1)+'/'+M.length;
+  document.getElementById('sDone').textContent=s.done;
+  document.getElementById('sHrs').textContent=s.hrs+'/'+s.totalHrs;
+  document.getElementById('sStreak').textContent=S.streak||0;
+  document.getElementById('sZone').textContent=M[ci].z;
+  const pc=s.done/s.total*100;
+  document.getElementById('pfill').style.width=pc+'%';
+  document.getElementById('ptext').textContent=Math.round(pc)+'%  ('+s.hrs+' of '+s.totalHrs+' hours)';
+  document.getElementById('kDone').textContent=s.done+' / '+s.total;
+  document.getElementById('kHrs').textContent=s.hrs+' / '+s.totalHrs;
+  document.getElementById('kRes').textContent=s.res+' / '+s.resTotal;
+  const m=M[ci];
+  document.getElementById('kZone').textContent=m.z+' '+Z[m.z].name;
+  const zd=M.filter(x=>x.z===m.z), zdn=zd.filter(x=>S.done[x.id]).length;
+  document.getElementById('kZprog').textContent=zdn+' / '+zd.length+' stages';
+  document.getElementById('kLast').textContent=S.last?new Date(S.last).toLocaleString():'never';
+  const rem=s.totalHrs-s.hrs;
+  document.getElementById('kEta').textContent= rem<=0?'done':('~'+Math.ceil(rem/4/30)+' months at 4h/day');
+  // notes
+  document.getElementById('notes').innerHTML=NOTES.map(n=>
+    `<div style="margin-bottom:9px"><div style="color:var(--gold);font-size:11.5px">${n[0]}</div>
+     <div style="font-size:11.5px;color:var(--mute);line-height:1.45">${n[1]}</div></div>`).join('');
+}
+
+function drawCoach(){
+  const box=document.getElementById('coach'); if(!box)return;
+  const hint=document.getElementById('cHint');
+  const i=firstIncomplete();
+  if(i<0){
+    box.innerHTML='<div style="color:var(--gold);font-size:13px;margin-bottom:8px">Road complete. All 17 stages cleared.</div>'+
+      '<div style="color:#d8d0bc">Refresh your resume with real numbers, apply to SOC and IT support roles, and start '+
+      'submitting bounty reports on targets you own. The road ends here. The hunt does not.</div>';
+    if(hint)hint.textContent='';
+    return;
+  }
+  const m=M[i], z=Z[m.z];
+  const tips=TIPS[m.id]||[];
+  let ri=m.res.findIndex((_,k)=>!S.res[resKey(m,k)]); if(ri<0)ri=0;
+  const rr=m.res[ri];
+  const cleared=m.res.filter((_,k)=>S.res[resKey(m,k)]).length;
+  const pct=Math.round(cleared/m.res.length*100);
+  const remaining=m.h;
+
+  let say;
+  if(cleared===0){
+    say='Start here. Open the stage and work <b>'+rr[0]+'</b> first. '+
+        (tips[0]?tips[0]:'');
+  } else if(cleared<m.res.length){
+    say='You are through <b>'+cleared+' of '+m.res.length+'</b> resources in '+
+        (tips[1]?tips[1]:'Keep going, next tile is queued.');
+  } else {
+    say='Every resource in this stage is cleared. Hit <b>Mark Stage Complete</b> to unlock '+
+        (M[i+1]?M[i+1].id+' '+M[i+1].n:'the next zone')+'.';
+  }
+
+  const mins=Math.max(20,Math.min(90,remaining*20));
+  box.innerHTML=
+    '<div style="color:var(--gold);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">'+
+      'ZONE '+m.z+' &middot; '+z.name+' &middot; '+(i+1)+' of '+M.length+'</div>'+
+    '<div style="font-size:15px;color:#fff;margin-bottom:8px">'+m.id+' &mdash; '+m.n+'</div>'+
+    '<div style="font-size:12.5px;color:#d8d0bc;line-height:1.5;margin-bottom:10px">'+say+'</div>'+
+    '<div style="display:flex;gap:6px;align-items:center;margin-bottom:10px">'+
+      '<div style="flex:1;height:14px;background:#0c0c10;border:2px solid #000">'+
+        '<div style="height:100%;width:'+pct+'%;background:repeating-linear-gradient(90deg,var(--grass) 0 6px,var(--grass-d) 6px 8px)"></div>'+
+      '</div>'+
+      '<span style="font-size:11px;color:var(--mute)">'+cleared+'/'+m.res.length+'</span>'+
+    '</div>'+
+    '<div class="row" style="display:flex;gap:7px;flex-wrap:wrap">'+
+      '<button class="btn pri" id="cGo">OPEN '+m.id+'</button>'+
+      '<button class="btn" id="cRes">NEXT: '+rr[0].slice(0,22).toUpperCase()+'</button>'+
+      '<button class="btn" id="cPlan">PLAN '+mins+' MIN</button>'+
+    '</div>'+
+    '<div class="hint" style="margin-top:9px">'+esc(z.why)+'</div>';
+
+  if(hint)hint.textContent='updates itself';
+  document.getElementById('cGo').onclick=()=>openStage(i);
+  document.getElementById('cRes').onclick=()=>{window.open(rr[1],'_blank','noopener');};
+  document.getElementById('cPlan').onclick=()=>{
+      if(!Array.isArray(S.log))S.log=[];
+      S.log.unshift({t:new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,5),x:m.id+' '+mins+' min block'});
+      if(S.log.length>200)S.log.length=200;
+      save(); drawLog(); drawCoach();
+    };
+}
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function drawLog(){
+  const b=document.getElementById('logbook'); if(!b)return;
+  const c=document.getElementById('logCount');
+  if(c)c.textContent=S.log.length+' ENTRIES';
+  if(!S.log.length){ b.innerHTML='<div class="hint">Empty. Hit PLAN in the Coach panel to log a study block. '+
+    'Stage clears and resource taps also land here automatically.</div>'; return; }
+  b.innerHTML=S.log.slice(0,60).map(e=>
+    '<div class="row" style="padding:5px 7px;background:#181820;border-left:2px solid var(--gold)">'+
+    '<span style="font-size:10.5px;color:var(--mute);flex:0 0 96px">'+e.t+'</span>'+
+    '<span style="font-size:11.5px">'+e.x+'</span></div>').join('');
+}
+
+function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();}
+
+/* ============ STAGE MODAL ============ */
+let openIdx=-1;
+function openStage(i){
+  openIdx=i; const m=M[i], d=document.getElementById('detail');
+  document.getElementById('kZone').textContent='ZONE '+m.z+' &middot; '+Z[m.z].name;
+  document.getElementById('mTitle2').textContent=m.id+' '+m.n;
+  document.getElementById('mIcon').innerHTML=ico(m.ic).replace('<svg','<svg width="26" height="26"');
+  document.getElementById('kHrs').textContent=m.h+' hours estimated';
+  document.getElementById('mOut').innerHTML=m.out.map(o=>'<li>'+o+'</li>').join('');
+  const dn=S.done[m.id];
+  const db=document.getElementById('mDoneBtn');
+  db.textContent=dn?'Reopen Stage':'Mark Stage Complete';
+  db.style.background=dn?'#3a3a42':'var(--grass)';
+  const box=document.getElementById('dTiles');
+  box.innerHTML=m.res.map((r,k)=>{
+    const used=S.res[resKey(m,k)];
+    return `<a class="ilink ${used?'used':''}" href="${r[1]}" target="_blank" rel="noopener nofollow"
+      data-m="${m.id}" data-k="${k}" title="${r[0]}">${fav(r[1])}<span>${r[0]}</span></a>`;
+  }).join('');
+  box.querySelectorAll('.ilink').forEach(a=>a.onclick=()=>{
+    const mk=a.dataset.m+':'+a.dataset.k;
+    if(!S.res[mk]){S.res[mk]=true;save();}
+    a.classList.add('used');
+    drawMission(); drawDash();
+  });
+  d.classList.add('on'); document.body.style.overflow='hidden';
+}
+function closeStage(){
+  document.getElementById('detail').classList.remove('on');
+  document.body.style.overflow='';
+  save(); render();
+}
+document.getElementById('dClose').onclick=closeStage;
+document.getElementById('detail').onclick=e=>{if(e.target.id==='detail')closeStage()};
+document.getElementById('mDoneBtn').onclick=()=>{
+  const m=M[openIdx]; S.done[m.id]=!S.done[m.id];
+  if(S.done[m.id]){
+    m.res.forEach((_,k)=>{if(!S.res[resKey(m,k)])S.res[resKey(m,k)]=true});
+    S.log.unshift({t:new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,5),x:'CLEARED '+m.id+' '+m.n});
+  }
+  save(); closeStage();
+};
+
+/* ============ CONTROLS ============ */
+document.getElementById('mGo').onclick=()=>{const i=firstIncomplete(); if(i>=0)openStage(i)};
+document.getElementById('mNext').onclick=()=>{
+  const i=firstIncomplete(); if(i<0)return;
+  const m=M[i]; let ri=m.res.findIndex((_,k)=>!S.res[resKey(m,k)]);
+  if(ri>=0){S.res[resKey(m,ri)]=true;save();drawMission();drawDash()}
+};
+document.getElementById('bReset').onclick=()=>{
+  if(!confirm('Wipe all progress, cleared resources, notes and logbook on this device?'))return;
+  S={done:{},res:{},notes:{},log:[],last:null,streak:0,seen:null}; save(); render();
+};
+document.getElementById('bExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='cyber-roadmap-save.json'; a.click();
+};
+document.getElementById('bImport').onclick=()=>{
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json';
+  inp.onchange=()=>{const f=inp.files[0]; if(!f)return;
+    const r=new FileReader(); r.onload=()=>{try{S=Object.assign(S,JSON.parse(r.result));save();render();alert('Save loaded.')}catch(e){alert('Bad file.')}}; r.readAsText(f);};
+  inp.click();
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeStage()});
+
+/* ============ LIVE GITHUB ============ */
+function gh(){
+  const el=document.getElementById('kRepos');
+  fetch('https://api.github.com/users/Diavolo148888/repos?per_page=100')
+   .then(r=>r.json())
+   .then(d=>{ if(Array.isArray(d)) el.textContent=d.length+' public'; else el.textContent='offline'; })
+   .catch(()=>el.textContent='offline');
+}
+
+/* ============ STREAK ============ */
+function streak(){
+  const today=new Date().toISOString().slice(0,10);
+  if(S.seen===today) return;
+  if(S.seen){
+    const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+    S.streak = (S.seen===y)?(S.streak||0)+1:1;
+  } else S.streak=1;
+  S.seen=today; save();
+}
+function render(){drawAll();}
+
+streak(); render(); gh();
+setInterval(()=>{gh()},600000);
+</script>
+</body>
+</html>
