@@ -109,6 +109,48 @@ header{
 }
 .panel>.hd .ic{width:20px;height:20px;flex:0 0 20px}
 
+/* ---------- credential + intel board ---------- */
+.tabs{display:flex;gap:0;margin:0 0 16px;border:3px solid #000;box-shadow:0 3px 0 rgba(0,0,0,.4)}
+.tab{
+  background:#2a2a32;color:var(--mute);padding:8px 14px;font-size:11px;letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer;border-right:2px solid #000;flex:1;text-align:center;
+}
+.tab:last-child{border-right:0}
+.tab:hover{background:#34343e;color:var(--ink)}
+.tab.on{background:var(--gold);color:#151003;font-weight:bold}
+@media(max-width:700px){.tab{font-size:9px;padding:8px 6px}}
+.cert{display:flex;gap:11px;padding:11px;background:#202027;border-left:4px solid var(--stone);margin-bottom:8px}
+.cert.gold{border-left-color:var(--gold);background:#221d0e}
+.cert.green{border-left-color:var(--grass);background:#16210f}
+.cert.red{border-left-color:var(--redstone);background:#221414}
+.cico{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;background:#111116;border:2px solid #000;font-size:15px}
+.cbody2{flex:1;min-width:0}
+.ctitle{font-size:13.5px;color:#fff;margin-bottom:3px;line-height:1.3}
+.cmeta{font-size:11px;color:var(--mute);line-height:1.45}
+.ctags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.ctag{font-size:9px;padding:2px 6px;border:2px solid #000;text-transform:uppercase;letter-spacing:.5px}
+.t-real{background:var(--grass);color:#08190a}
+.t-badge{background:#4a4a55;color:#e6e6e6}
+.t-free{background:#1c3a5c;color:#bfe0ff}
+.t-dead{background:var(--redstone);color:#fff}
+.t-soon{background:var(--gold);color:#241b00}
+.cgo{
+  flex:0 0 auto;align-self:center;background:#3a3a42;color:var(--ink);
+  border:0;border-top:3px solid #6a6a75;border-left:3px solid #6a6a75;
+  border-right:3px solid #1a1a1e;border-bottom:3px solid #1a1a1e;
+  padding:6px 10px;font-size:10px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;text-decoration:none
+}
+.cgo:hover{background:var(--grass);color:#08190a;border-top-color:#9fd47f;border-left-color:#9fd47f}
+.idead{background:#141414;border:3px solid #000;padding:12px;margin-bottom:14px}
+.idead .hd{background:#2c2c34;border-bottom:3px solid #000;padding:8px 12px;margin:-12px -12px 12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:bold}
+.trend{display:flex;gap:10px;padding:9px 11px;background:#202027;border-left:3px solid var(--diamond);margin-bottom:7px}
+.trend.real{border-left-color:var(--grass)}
+.trend.hype{border-left-color:#5a5a6a}
+.trend b{color:#fff;font-size:13px}
+.trend p{margin:4px 0 0;font-size:11.5px;color:var(--mute);line-height:1.45}
+.hypebar{display:inline-block;font-size:9px;padding:2px 6px;background:#4a4a55;color:#e6e6e6;text-transform:uppercase;letter-spacing:.5px}
+.stamp{font-size:10px;color:var(--mute);letter-spacing:1px;text-transform:uppercase}
+
 /* ---------- stage map ---------- */
 .map{
   position:relative; width:100%; height:800px;
@@ -243,6 +285,14 @@ select,input[type=text]{
 
   <div class="cols">
     <div>
+      <div class="tabs" id="mainTabs">
+        <div class="tab on" data-mv="map">Stage Map</div>
+        <div class="tab" data-mv="creds">Credentials</div>
+        <div class="tab" data-mv="intel">Intel</div>
+        <div class="tab" data-mv="allres">All Links</div>
+      </div>
+
+      <div id="pane-map">
       <div class="panel blk">
         <div class="hd">
           <span class="ic" data-ic="map"></span>
@@ -253,6 +303,11 @@ select,input[type=text]{
           <svg id="trail" viewBox="0 0 1000 800" preserveAspectRatio="none"></svg>
         </div>
       </div>
+      </div>
+
+      <div id="pane-creds" class="hidden"></div>
+      <div id="pane-intel" class="hidden"></div>
+      <div id="pane-allres" class="hidden"></div>
     </div>
 
     <div>
@@ -646,6 +701,188 @@ function drawCoach(){
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
+/* ============ CREDENTIALS ============ */
+/* tier: real = industry recognised cert | badge = certificate of completion only
+   cost: 0 = genuinely free | free-voucher = free exam voucher program
+   verified: date the offer was last confirmed live                            */
+const CREDS=[
+ {t:'Microsoft Learn — free security training and study guides',ic:'shield',tier:'badge',cost:0,voucher:'training and study guides are free, exams are not',
+  u:'https://learn.microsoft.com/en-us/training/student-hub/credentials',when:'2026-10-03',
+  why:'Verified live. Student Hub lists free training, resources and assessments. Every SC-series study guide is free. The exam itself is not free.'},
+ {t:'Exam SC-900 study guide — Microsoft Security, Compliance and Identity',ic:'book',tier:'badge',cost:0,voucher:'free study guide',
+  u:'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900',when:'2026-10-03',
+  why:'Verified live. Free official study guide for the entry-level fundamentals exam. Best value if you later sit SC-900.'},
+ {t:'Introduction to Microsoft security solutions — free learning path',ic:'shield',tier:'badge',cost:0,voucher:'free training path',
+  u:'https://learn.microsoft.com/en-us/training/paths/describe-capabilities-of-microsoft-security-solutions/',when:'2026-10-03',
+  why:'Verified live. Free path covering Defender, Entra and Purview. Directly matches entry SOC job ads.'},
+ {t:'Microsoft Certified: Fundamentals (cert family index)',ic:'network',tier:'real',cost:'paid',voucher:'exam is paid, training is free',
+  u:'https://learn.microsoft.com/en-us/credentials/certifications/fundamentals',when:'2026-10-03',
+  why:'Verified live index page. Use it to confirm what Microsoft credentials exist today; they renamed many in 2026.'},
+ {t:'Azure for Students',ic:'cloud',tier:'badge',cost:0,voucher:'free account with credits, needs school email',
+  u:'https://azure.microsoft.com/en-us/free/students',when:'2026-10-03',
+  why:'Verified live. Free Azure credit so you can break your own account in a lab without billing anyone.'},
+ {t:'Cisco Skills for All — Introduction to Cybersecurity',ic:'network',tier:'badge',cost:0,voucher:'free course plus digital badge',
+  u:'https://www.netacad.com/courses/introduction-to-cybersecurity',when:'2026-10-03',
+  why:'Verified live, page title confirms it is free. Not a cert, a verifiable badge. Cisco badges do appear on real resumes.'},
+ {t:'Cisco Networking Academy — CCNA pathway',ic:'network',tier:'badge',cost:0,voucher:'free courses, paid exam only',
+  u:'https://www.netacad.com/',when:'2026-10-03',
+  why:'Forums put CCNA before Security+ for a true beginner. Do the free courses, sit the paid exam only if a job ad demands it.'},
+ {t:'Google Cybersecurity Professional Certificate',ic:'shield',tier:'badge',cost:0,voucher:'Coursera audit is free, certificate is paid',
+  u:'https://www.coursera.org/professional-certificates/google-cybersecurity',when:'2026-10-03',
+  why:'Verified live. Strong brand recognition. Useful content in free audit mode; treat the certificate itself as optional.'},
+ {t:'Professor Messer SY0-701 Security+ course',ic:'book',tier:'real',cost:0,voucher:'full course free, exam is paid',
+  u:'https://www.professormesser.com/security-plus/',when:'2026-10-03',
+  why:'Not a certificate, it is the free study material for Security+. Do this before booking any exam date.'},
+ {t:'TryHackMe completion badges',ic:'terminal',tier:'badge',cost:0,voucher:'free on the free tier',
+  u:'https://tryhackme.com',when:'2026-10-03',
+  why:'Every room you finish issues a badge. Cheap proof of consistent practice, not a substitute for experience.'},
+ {t:'CompTIA Security+ SY0-701',ic:'shield',tier:'real',cost:'paid',voucher:'about 400 USD, student discounts exist',
+  u:'https://www.comptia.org/certifications/security',when:'2026-10-03',
+  why:'The cert a lot of PH SOC job ads filter on. Target it in Phase 5, never earlier.'}
+];
+function drawCreds(){
+  const p=document.getElementById('pane-creds'); if(!p)return;
+  let h='<div class="panel blk"><div class="hd"><span class="ic" data-ic="trophy"></span>'+
+    '<h2 style="margin:0">Credentials</h2><span style="margin-left:auto" class="hint">checked 2026-10-03</span></div>'+
+    '<div class="dbody" style="padding:14px">'+
+    '<div class="warn" style="border-left-color:var(--gold);background:#221d0e;color:#e8dcae">'+
+      'Tier matters more than the badge. <b style="color:var(--gold)">REAL</b> means a vendor-issued certificate '+
+      'that employers filter on. <b style="color:var(--gold)">BADGE</b> means a certificate of completion, useful as '+
+      'evidence of practice but not a credential. Never write a badge as if it were a certification.</div>';
+  CREDS.forEach(c=>{
+    const cls=c.tier==='real'?'green':(c.cost==='paid'?'':'gold');
+    h+='<div class="cert '+cls+'"><div class="cico">'+ico(c.ic)+'</div><div class="cbody2">'+
+      '<div class="ctitle">'+esc(c.t)+'</div>'+
+      '<div class="cmeta">'+esc(c.why)+'</div>'+
+      '<div class="cmeta" style="margin-top:5px;color:var(--gold)">'+esc(c.voucher)+'</div>'+
+      '<div class="ctags">'+
+        '<span class="ctag '+(c.tier==='real'?'t-real':'t-badge')+'">'+(c.tier==='real'?'REAL CERT':'BADGE')+'</span>'+
+        '<span class="ctag '+(c.cost==='paid'?'t-dead':'t-free')+'">'+(c.cost==='paid'?'PAID EXAM':'FREE')+'</span>'+
+        '<span class="ctag t-badge">VERIFIED '+esc(c.when)+'</span>'+
+      '</div></div>'+
+      '<a class="cgo" href="'+c.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
+  });
+  h+='<div class="hint" style="margin-top:10px">Dead options are not listed here. ISC2 CC is closed, CyberAces is retired, '+
+     'and picoCTF moved to cylabacademy.org. See the Stage Map intel panel for those corrections.</div>';
+  h+='</div></div>';
+  p.innerHTML=h;
+  p.querySelectorAll('[data-ic]').forEach(e=>{e.innerHTML=ico(e.dataset.ic);});
+}
+
+/* ============ INTEL / CURRENT EVENTS ============ */
+const INTEL={
+ updated:'2026-10-03',
+ events:[
+  {t:'US Cyber Challenge — Cyber Quests',w:'Registration open through 31 Oct 2026',free:true,
+   u:'https://www.uscyberchallenge.org/',why:'Free online CTF, open to non-US participants. Qualifier for their cyber camps.'},
+  {t:'CMU CyLab picoCTF yearly competition',w:'Usually opens late autumn',free:true,
+   u:'https://cylabacademy.org/',why:'Free beginner CTF from Carnegie Mellon. Moved here from the old play.picoctf.org.'},
+  {t:'Hack The Box free tier + Starting Point',w:'Always on, no deadline',free:true,
+   u:'https://app.hackthebox.com/',why:'Free machines are enough for Phase 0 through Phase 2. No need to pay early.'}
+ ],
+ trends:[
+  {t:'Cloud identity and access control',k:'real',
+   why:'Access sprawl, not perimeter bugs, is what breaches now. IAM and permission review are the skills job ads ask for.'},
+  {t:'AI security and LLM red teaming',k:'real',
+   why:'Prompt injection and data leakage through models are now a real bug class. Cheap way in: build, then break, your own small model app.'},
+  {t:'Software supply chain and CI/CD security',k:'real',
+   why:'Dependency confusion and secret leakage in pipelines. Directly relevant to the open source tooling you already ship.'},
+  {t:'Post-quantum migration planning',k:'real',
+   why:'Harvest-now-decrypt-later makes this a board-level topic. A small module of crypto now saves a scramble later.'},
+  {t:'OT and ICS security',k:'hype',
+   why:'Real but heavily industrial. Worth awareness, not your first specialisation unless you target a plant or shipping operator.'}
+ ],
+ communities:[
+  {t:'r/SecurityCareerAdvice',u:'https://www.reddit.com/r/SecurityCareerAdvice/',why:'Starters. Blunt answers about path and hiring.'},
+  {t:'r/netsec',u:'https://www.reddit.com/r/netsec/',why:'Networking fundamentals, the hardest part of zone 0.'},
+  {t:'r/careerguidance',u:'https://www.reddit.com/r/careerguidance/',why:'Career switching into security from other IT.'},
+  {t:'r/ITCareerQuestions',u:'https://www.reddit.com/r/ITCareerQuestions/',why:'Hunting, interviews, resume review.'},
+  {t:'HackTheBox subreddit',u:'https://www.reddit.com/r/hackthebox/',why:'Walkthroughs and machine chatter.'}
+ ]
+};
+function drawIntel(){
+  const p=document.getElementById('pane-intel'); if(!p)return;
+  let h='<div class="panel blk"><div class="hd"><span class="ic" data-ic="radar"></span>'+
+    '<h2 style="margin:0">Intel</h2><span style="margin-left:auto" class="hint stamp">last checked '+INTEL.updated+'</span></div>'+
+    '<div class="dbody" style="padding:14px">';
+
+  h+='<div class="idead"><div class="hd">Open and free right now</div>';
+  INTEL.events.forEach(e=>{
+    h+='<div class="trend real" style="border-left-color:var(--grass);align-items:center">'+
+      '<div style="flex:1"><b>'+esc(e.t)+'</b><p>'+esc(e.w)+' &middot; '+esc(e.why)+'</p></div>'+
+      '<a class="cgo" href="'+e.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
+  });
+  h+='<div class="hint">Deadlines move. Treat dates as a prompt to re-check the page, not a guarantee.</div></div>';
+
+  h+='<div class="idead"><div class="hd">Skills employers actually want in 2026</div>';
+  INTEL.trends.forEach(t=>{
+    h+='<div class="trend '+(t.k==='real'?'real':'hype')+'"><div style="flex:1">'+
+      '<b>'+esc(t.t)+'</b> <span class="hypebar">'+(t.k==='real'?'HIRING FOR':'AWARENESS')+'</span>'+
+      '<p>'+esc(t.why)+'</p></div></div>';
+  });
+  h+='</div>';
+
+  h+='<div class="idead"><div class="hd">Communities worth your time</div>';
+  INTEL.communities.forEach(c=>{
+    h+='<div class="trend" style="align-items:center"><div style="flex:1"><b>'+esc(c.t)+'</b><p>'+esc(c.why)+'</p></div>'+
+      '<a class="cgo" href="'+c.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
+  });
+  h+='</div>';
+
+  h+='<div class="idead"><div class="hd">Corrections that break older roadmaps</div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>ISC2 CC free program</b>'+
+    '<p>CLOSED. The isc2.org page source reads "Program Closed". No new enrolments.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>cyberdefenders.com</b>'+
+    '<p>Parked spam page. The real site is cyberdefenders.org.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>CyberAces</b>'+
+    '<p>Retired June 2023. Use US Cyber Challenge instead.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--gold)"><div><b>picoCTF</b>'+
+    '<p>Moved under CMU CyLab Security Academy at cylabacademy.org.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--gold)"><div><b>Cloud Skills Boost</b>'+
+    '<p>Renamed to Google Skills at skills.google.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>practicalnetworking.com</b>'+
+    '<p>Parked domain with no content.</p></div></div></div>';
+
+  h+='</div></div>';
+  p.innerHTML=h;
+  p.querySelectorAll('[data-ic]').forEach(e=>{e.innerHTML=ico(e.dataset.ic);});
+}
+
+/* ============ ALL LINKS ============ */
+function drawAllRes(){
+  const p=document.getElementById('pane-allres'); if(!p)return;
+  const seen=new Map();
+  M.forEach(m=>m.res.forEach(r=>{
+    if(!seen.has(r[1]))seen.set(r[1],{n:r[0],mods:[]});
+    seen.get(r[1]).mods.push(m.id);
+  }));
+  const arr=[...seen.entries()].sort((a,b)=>a[1].n.localeCompare(b[1].n));
+  let h='<div class="panel blk"><div class="hd"><span class="ic" data-ic="globe"></span>'+
+    '<h2 style="margin:0">All Links</h2><span style="margin-left:auto" class="hint">'+arr.length+' sites &middot; checked 2026-10-02</span></div>'+
+    '<div class="dbody" style="padding:14px"><div class="icons">';
+  arr.forEach(([u,v])=>{
+    h+='<a class="ilink" href="'+u+'" target="_blank" rel="noopener nofollow" title="'+esc(v.n)+'">'+fav(u)+
+       '<span>'+esc(v.n)+'</span></a>';
+  });
+  h+='</div><div class="hint">Every link used anywhere in the road, in one place. '+
+     'All HTTP-checked 2026-10-02. crt.sh intermittently returns nginx 502 from its own upstream; that is not a dead link.</div></div></div>';
+  p.innerHTML=h;
+}
+
+function drawTabs(){
+  document.querySelectorAll('#mainTabs .tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('#mainTabs .tab').forEach(x=>x.classList.remove('on'));
+      t.classList.add('on');
+      ['map','creds','intel','allres'].forEach(v=>{
+        const el=document.getElementById('pane-'+v);
+        if(el)el.classList.toggle('hidden',v!==t.dataset.mv);
+      });
+    };
+  });
+}
+window.drawTabs=drawTabs;
+
 function drawLog(){
   const b=document.getElementById('logbook'); if(!b)return;
   const c=document.getElementById('logCount');
@@ -658,7 +895,7 @@ function drawLog(){
     '<span style="font-size:11.5px">'+e.x+'</span></div>').join('');
 }
 
-function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();}
+function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();drawCreds();drawIntel();drawAllRes();}
 
 /* ============ STAGE MODAL ============ */
 let openIdx=-1;
@@ -748,7 +985,7 @@ function streak(){
 }
 function render(){drawAll();}
 
-streak(); render(); gh();
+streak(); render(); drawTabs(); gh();
 setInterval(()=>{gh()},600000);
 </script>
 </body>
