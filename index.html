@@ -151,6 +151,57 @@ header{
 .hypebar{display:inline-block;font-size:9px;padding:2px 6px;background:#4a4a55;color:#e6e6e6;text-transform:uppercase;letter-spacing:.5px}
 .stamp{font-size:10px;color:var(--mute);letter-spacing:1px;text-transform:uppercase}
 
+/* ---------- task room (TryHackMe style) ---------- */
+.rmwrap{display:flex;gap:0;align-items:stretch;min-height:520px}
+.rmlist{width:270px;flex:0 0 270px;background:#171a20;border-right:3px solid #000;overflow-y:auto;max-height:74vh}
+.rmhead{padding:10px 12px;background:#22252c;border-bottom:3px solid #000;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:bold;position:sticky;top:0;z-index:2}
+.rmprog{padding:8px 12px;background:#1a1d24;border-bottom:2px solid #000;font-size:11px;color:var(--mute)}
+.rmprog b{color:var(--grass)}
+.rmtask{
+  display:flex;gap:9px;align-items:flex-start;padding:9px 11px;cursor:pointer;
+  background:#1a1d24;border-bottom:2px solid #14161b;border-left:4px solid transparent;
+}
+.rmtask:hover{background:#23262e}
+.rmtask.sel{background:#2a2410;border-left-color:var(--gold)}
+.rmtask.done{border-left-color:var(--grass)}
+.rmtask.done .rmtt{color:var(--mute);text-decoration:line-through}
+.rmnum{
+  width:22px;height:22px;flex:0 0 22px;display:grid;place-items:center;font-size:11px;
+  background:#0f1116;border:2px solid #000;color:var(--ink-d);
+}
+.rmtask.done .rmnum{background:var(--grass);color:#08190a;font-weight:bold}
+.rmtask.sel .rmnum{background:var(--gold);color:#241b00;font-weight:bold}
+.rmtt{font-size:12.5px;color:#fff;line-height:1.3;flex:1}
+.rmdiff{display:flex;gap:2px;margin-top:4px}
+.rmdiff i{width:5px;height:5px;background:#3a3a44;display:block}
+.rmdiff i.f{background:var(--gold)}
+.rmdiff i.h{background:var(--redstone)}
+.rmrisk{font-size:9px;color:var(--redstone);letter-spacing:1px;text-transform:uppercase;margin-top:3px;display:block}
+
+.rmmain{flex:1;padding:16px;overflow-y:auto;max-height:74vh;min-width:0}
+.rmcrumb{font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.rmh{font-size:19px;color:#fff;margin:0 0 8px;line-height:1.25}
+.rmmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.rmwhat{background:#15181e;border-left:3px solid var(--diamond);padding:11px;font-size:13.5px;line-height:1.5;color:#d4dae4;margin-bottom:14px}
+.rmpts{font-family:var(--px);font-size:9px;color:var(--gold);margin-left:auto;white-space:nowrap}
+.rmq{background:#1a1d24;border:2px solid #000;padding:11px;margin-bottom:9px}
+.rmq .qt{font-size:13px;color:#fff;margin-bottom:8px;display:flex;gap:8px}
+.rmq .qn{color:var(--gold);font-family:var(--px);font-size:9px;flex:0 0 18px;padding-top:2px}
+.rmans{background:#0f1116;border-left:3px solid var(--grass);padding:9px 11px;font-size:13px;color:#cfe8bf;line-height:1.5}
+.rmreveal{font-size:10.5px;color:var(--mute);cursor:pointer;user-select:none;letter-spacing:.5px}
+.rmreveal:hover{color:var(--gold)}
+.rmres{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.rmreslink{background:#1a1d24;border:2px solid #000;padding:9px 5px 7px;text-align:center;text-decoration:none;color:var(--ink);position:relative}
+.rmreslink:hover{background:#252932;border-color:var(--stone)}
+.rmreslink img{width:28px;height:28px;display:block;margin:0 auto 6px;background:#0f1116;border:1px solid #000}
+.rmreslink span{font-size:9px;line-height:1.3;color:var(--mute);display:block;word-break:break-word}
+.rmreslink.used{background:#16210f;border-color:var(--grass-d)}
+.rmreslink.used:after{content:"DONE";position:absolute;top:2px;right:3px;font-size:8px;color:var(--grass);letter-spacing:1px}
+.rmflag{font-size:11px;color:var(--redstone);background:#221414;border-left:3px solid var(--redstone);padding:8px 11px;margin-bottom:12px}
+.rmfoot{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:3px solid #000;flex-wrap:wrap;align-items:center}
+.rmfoot .sp{flex:1}
+@media(max-width:760px){.rmwrap{flex-direction:column}.rmlist{width:100%;flex:none;max-height:200px;border-right:0;border-bottom:3px solid #000}.rmmain{max-height:none}}
+
 /* ---------- stage map ---------- */
 .map{
   position:relative; width:100%; height:800px;
@@ -370,7 +421,7 @@ select,input[type=text]{
 </div>
 
 <div class="detail" id="detail">
-  <div class="dbox">
+  <div class="dbox" style="max-width:1000px">
     <div class="dhd">
       <span id="mIcon" data-ic="stage"></span>
       <div>
@@ -379,20 +430,16 @@ select,input[type=text]{
       </div>
       <button class="btn x" id="dClose">Close</button>
     </div>
-    <div class="dbody">
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
-        <button class="btn pri" id="mDoneBtn">Mark Stage Complete</button>
-        <span class="hint" id="mHrs">0 hours</span>
+    <div class="dbody" style="padding:0">
+      <div class="rmwrap">
+        <div class="rmlist" id="rmList"></div>
+        <div class="rmmain" id="rmMain"></div>
       </div>
-      <h3>Can Do When Finished</h3>
-      <ul class="out" id="mOut"></ul>
-      <h3>Resources</h3>
-      <div class="icons" id="dTiles"></div>
-      <p class="hint">Tap a tile to open it and mark it cleared. Cleared tiles turn green and the next objective moves on by itself.</p>
     </div>
   </div>
 </div>
 
+<script src="tasks.js"></script>
 <script>
 /* ============ ICONS ============ */
 const P={
@@ -491,6 +538,7 @@ try{const r=localStorage.getItem(K); if(r)S=Object.assign(S,JSON.parse(r));}catc
 if(typeof S.done!=='object'||!S.done)S.done={};
 if(typeof S.res!=='object'||!S.res)S.res={};
 if(typeof S.notes!=='object'||!S.notes)S.notes={};
+if(typeof S.task!=='object'||!S.task||Array.isArray(S.task))S.task={};
 if(!Array.isArray(S.log))S.log=[];
 const save=()=>{S.last=new Date().toISOString(); try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 /* ---------- favicon for each resource tile ---------- */
@@ -651,6 +699,10 @@ function drawCoach(){
   }
   const m=M[i], z=Z[m.z];
   const tips=TIPS[m.id]||[];
+  const tasks=TASKS[m.id]||[];
+  const st=taskState(m.id);
+  const tDone=tasks.filter((_,k)=>st[k]).length;
+  const nextT=tasks.findIndex((_,k)=>!st[k]);
   let ri=m.res.findIndex((_,k)=>!S.res[resKey(m,k)]); if(ri<0)ri=0;
   const rr=m.res[ri];
   const cleared=m.res.filter((_,k)=>S.res[resKey(m,k)]).length;
@@ -658,14 +710,14 @@ function drawCoach(){
   const remaining=m.h;
 
   let say;
-  if(cleared===0){
-    say='Start here. Open the stage and work <b>'+rr[0]+'</b> first. '+
+  if(tDone>0&&nextT>=0){
+    say='You are through <b>'+tDone+' of '+tasks.length+'</b> tasks in this stage. Next up: <b>'+esc(tasks[nextT].t)+'</b>. '+
+        (tips[1]?tips[1]:'Keep going.');
+  } else if(tDone===0){
+    say='Start here. Open the stage and work <b>Task 1: '+esc(tasks.length?tasks[0].t:'')+'</b>. '+
         (tips[0]?tips[0]:'');
-  } else if(cleared<m.res.length){
-    say='You are through <b>'+cleared+' of '+m.res.length+'</b> resources in '+
-        (tips[1]?tips[1]:'Keep going, next tile is queued.');
   } else {
-    say='Every resource in this stage is cleared. Hit <b>Mark Stage Complete</b> to unlock '+
+    say='All <b>'+tasks.length+'</b> tasks in this stage are done. Hit <b>Mark Stage Complete</b> to unlock '+
         (M[i+1]?M[i+1].id+' '+M[i+1].n:'the next zone')+'.';
   }
 
@@ -677,9 +729,9 @@ function drawCoach(){
     '<div style="font-size:12.5px;color:#d8d0bc;line-height:1.5;margin-bottom:10px">'+say+'</div>'+
     '<div style="display:flex;gap:6px;align-items:center;margin-bottom:10px">'+
       '<div style="flex:1;height:14px;background:#0c0c10;border:2px solid #000">'+
-        '<div style="height:100%;width:'+pct+'%;background:repeating-linear-gradient(90deg,var(--grass) 0 6px,var(--grass-d) 6px 8px)"></div>'+
+        '<div style="height:100%;width:'+(tasks.length?Math.round(tDone/tasks.length*100):0)+'%;background:repeating-linear-gradient(90deg,var(--grass) 0 6px,var(--grass-d) 6px 8px)"></div>'+
       '</div>'+
-      '<span style="font-size:11px;color:var(--mute)">'+cleared+'/'+m.res.length+'</span>'+
+      '<span style="font-size:11px;color:var(--mute)">'+tDone+'/'+tasks.length+' tasks</span>'+
     '</div>'+
     '<div class="row" style="display:flex;gap:7px;flex-wrap:wrap">'+
       '<button class="btn pri" id="cGo">OPEN '+m.id+'</button>'+
@@ -941,32 +993,116 @@ function drawLog(){
 
 function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();drawCreds();drawIntel();drawAllRes();}
 
-/* ============ STAGE MODAL ============ */
-let openIdx=-1;
-function openStage(i){
+/* ============ STAGE MODAL (TryHackMe style room) ============ */
+let openIdx=-1, openTask=0;
+function taskState(id){
+  if(typeof S.task!=='object'||!S.task||Array.isArray(S.task))S.task={};
+  if(typeof S.task[id]!=='object'||!S.task[id]||Array.isArray(S.task[id]))S.task[id]={};
+  return S.task[id];
+}
+
+function openStage(i,keepTask){
   openIdx=i; const m=M[i], d=document.getElementById('detail');
-  document.getElementById('kZone').textContent='ZONE '+m.z+' &middot; '+Z[m.z].name;
+  document.getElementById('mZone').textContent='ZONE '+m.z+' · '+Z[m.z].name;
   document.getElementById('mTitle2').textContent=m.id+' '+m.n;
   document.getElementById('mIcon').innerHTML=ico(m.ic).replace('<svg','<svg width="26" height="26"');
-  document.getElementById('kHrs').textContent=m.h+' hours estimated';
-  document.getElementById('mOut').innerHTML=m.out.map(o=>'<li>'+o+'</li>').join('');
-  const dn=S.done[m.id];
-  const db=document.getElementById('mDoneBtn');
-  db.textContent=dn?'Reopen Stage':'Mark Stage Complete';
-  db.style.background=dn?'#3a3a42':'var(--grass)';
-  const box=document.getElementById('dTiles');
-  box.innerHTML=m.res.map((r,k)=>{
-    const used=S.res[resKey(m,k)];
-    return `<a class="ilink ${used?'used':''}" href="${r[1]}" target="_blank" rel="noopener nofollow"
-      data-m="${m.id}" data-k="${k}" title="${r[0]}">${fav(r[1])}<span>${r[0]}</span></a>`;
-  }).join('');
-  box.querySelectorAll('.ilink').forEach(a=>a.onclick=()=>{
-    const mk=a.dataset.m+':'+a.dataset.k;
-    if(!S.res[mk]){S.res[mk]=true;save();}
-    a.classList.add('used');
-    drawMission(); drawDash();
-  });
+  const tasks=TASKS[m.id]||[];
+  if(!keepTask) openTask=0;
+  if(openTask>=tasks.length) openTask=Math.max(0,tasks.length-1);
   d.classList.add('on'); document.body.style.overflow='hidden';
+  drawRoom();
+}
+function drawRoom(){
+  const m=M[openIdx], tasks=TASKS[m.id]||[], st=taskState(m.id);
+  const doneN=tasks.filter((_,k)=>st[k]).length;
+
+  // left: task list
+  let L='<div class="rmhead">Tasks</div>'+
+    '<div class="rmprog">'+doneN+' / '+tasks.length+' complete · '+(tasks.length?Math.round(doneN/tasks.length*100):0)+'%</div>';
+  tasks.forEach((t,k)=>{
+    L+='<div class="rmtask '+(k===openTask?'sel ':'')+(st[k]?'done':'')+'" data-t="'+k+'">'+
+      '<div class="rmnum">'+(st[k]?'✓':k+1)+'</div>'+
+      '<div style="flex:1;min-width:0"><div class="rmtt">'+esc(t.t)+'</div>'+
+      '<div class="rmdiff">'+[1,2,3,4,5].map(n=>'<i class="'+(n<=t.d?(n>=4?'h':'f'):'')+'"></i>').join('')+'</div>'+
+      (t.risk?'<span class="rmrisk">authorised targets only</span>':'')+
+      '</div></div>';
+  });
+  document.getElementById('rmList').innerHTML=L;
+
+  // right: task detail
+  const t=tasks[openTask];
+  if(!t){ document.getElementById('rmMain').innerHTML='<div class="hint">No tasks in this stage yet.</div>'; return; }
+  let R='<div class="rmcrumb">Task '+(openTask+1)+' of '+tasks.length+' · '+esc(m.n)+'</div>'+
+    '<h3 class="rmh">'+esc(t.t)+'</h3>'+
+    '<div class="rmmeta"><span class="chip">DIFFICULTY '+t.d+'/5</span>'+
+    '<span class="chip">'+esc(m.h)+'H STAGE</span>'+
+    (t.risk?'<span class="chip" style="color:var(--redstone)">AUTHORISED TARGETS ONLY</span>':'')+
+    '<span class="rmpts">'+t.p+' PTS</span></div>';
+  if(t.risk)R+='<div class="rmflag">Only ever test systems you own or have written permission to test. Written authorisation, not curiosity, is what separates this from a crime.</div>';
+  R+='<div class="rmwhat">'+esc(t.w)+'</div>';
+
+  if(t.q&&t.q.length){
+    R+='<h3 style="font-size:12px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin:0 0 9px">Answer these</h3>';
+    t.q.forEach((q,j)=>{
+      const open=st['q'+j];
+      R+='<div class="rmq"><div class="qt"><span class="qn">Q'+(j+1)+'</span><span>'+esc(q.q)+'</span></div>'+
+        (open?'<div class="rmans">'+esc(q.a)+'</div>'
+             :'<div class="rmreveal" data-rev="q'+j+'">CLICK TO REVEAL ANSWER</div>')+
+        '</div>';
+    });
+  }
+
+  const used=(t.r||[]).filter(k=>S.res[resKey(m,k)]).length;
+  if(t.r&&t.r.length){
+    R+='<h3 style="font-size:12px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin:16px 0 9px">Resources · '+used+'/'+t.r.length+'</h3><div class="rmres">';
+    t.r.forEach(k=>{
+      const rr=m.res[k]; if(!rr)return;
+      const isUsed=!!S.res[resKey(m,k)];
+      R+='<a class="rmreslink '+(isUsed?'used':'')+'" href="'+rr[1]+'" target="_blank" rel="noopener nofollow" data-res="'+k+'" title="'+esc(rr[0])+'">'+
+        fav(rr[1])+'<span>'+esc(rr[0])+'</span></a>';
+    });
+    R+='</div>';
+  }
+
+  const k=openTask;
+  R+='<div class="rmfoot">'+
+    '<button class="btn pri" id="rmDone">'+(st[k]?'TASK DONE':'MARK TASK DONE')+'</button>'+
+    (k>0?'<button class="btn" id="rmPrev">PREV</button>':'')+
+    (k<tasks.length-1?'<button class="btn" id="rmNext">NEXT TASK</button>':'')+
+    '<div class="sp"></div>'+
+    (S.done[m.id]?'<button class="btn" id="rmOpenStage">REOPEN STAGE</button>':'<button class="btn pri" id="rmFinish">MARK STAGE COMPLETE</button>')+
+    '</div>'+
+    '<div class="hint" style="margin-top:10px">Clear every task, then mark the stage complete to unlock the next one. Answers are hidden until you reveal them.</div>';
+  document.getElementById('rmMain').innerHTML=R;
+
+  // wire it
+  document.getElementById('rmList').querySelectorAll('.rmtask').forEach(el=>{
+    el.onclick=()=>{ openTask=+el.dataset.t; drawRoom(); };
+  });
+  document.getElementById('rmMain').querySelectorAll('[data-rev]').forEach(el=>{
+    el.onclick=()=>{ const s=taskState(m.id); s[el.dataset.rev]=true; save(); drawRoom(); };
+  });
+  document.getElementById('rmMain').querySelectorAll('[data-res]').forEach(a=>{
+    a.onclick=()=>{ const key=resKey(m,+a.dataset.res); if(!S.res[key]){S.res[key]=true;save();} drawRoom(); drawMission(); drawDash(); };
+  });
+  const bd=document.getElementById('rmDone');
+  if(bd)bd.onclick=()=>{ const s=taskState(m.id); s[k]=!s[k];
+    if(!s[k])delete s[k];
+    if(S.done[m.id]&&!tasks.every((_,x)=>s[x])){delete S.done[m.id];}
+    save(); drawRoom(); drawMission(); drawDash(); };
+  const pv=document.getElementById('rmPrev'); if(pv)pv.onclick=()=>{openTask=Math.max(0,openTask-1);drawRoom();};
+  const nx=document.getElementById('rmNext'); if(nx)nx.onclick=()=>{openTask=Math.min(tasks.length-1,openTask+1);drawRoom();};
+  const os=document.getElementById('rmOpenStage');
+  if(os)os.onclick=()=>{ S.done[m.id]=false; save(); drawRoom(); drawMission(); drawDash(); };
+  const fn=document.getElementById('rmFinish');
+  if(fn)fn.onclick=()=>{
+    S.done[m.id]=true;
+    const st2=taskState(m.id);
+    tasks.forEach((_,x)=>{st2[x]=true;});
+    m.res.forEach((_,x)=>{S.res[resKey(m,x)]=true;});
+    S.log.unshift({t:new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,5),x:'CLEARED '+m.id+' '+m.n});
+    save(); closeStage();
+  };
 }
 function closeStage(){
   document.getElementById('detail').classList.remove('on');
@@ -975,14 +1111,6 @@ function closeStage(){
 }
 document.getElementById('dClose').onclick=closeStage;
 document.getElementById('detail').onclick=e=>{if(e.target.id==='detail')closeStage()};
-document.getElementById('mDoneBtn').onclick=()=>{
-  const m=M[openIdx]; S.done[m.id]=!S.done[m.id];
-  if(S.done[m.id]){
-    m.res.forEach((_,k)=>{if(!S.res[resKey(m,k)])S.res[resKey(m,k)]=true});
-    S.log.unshift({t:new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,5),x:'CLEARED '+m.id+' '+m.n});
-  }
-  save(); closeStage();
-};
 
 /* ============ CONTROLS ============ */
 document.getElementById('mGo').onclick=()=>{const i=firstIncomplete(); if(i>=0)openStage(i)};
