@@ -706,39 +706,45 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
    cost: 0 = genuinely free | free-voucher = free exam voucher program
    verified: date the offer was last confirmed live                            */
 const CREDS=[
+ {t:'Fortinet NSE 1 — Cybersecurity Fundamentals',ic:'shield',tier:'real',cost:0,voucher:'free self-paced course, vendor-issued badge',
+  u:'https://www.fortinet.com/training/cybersecurity-professionals',when:'2026-10-03',
+  why:'Verified on Fortinet\'s own page: "free self-paced courses designed for every stage of your learning journey". Real vendor credential, not a course-completion certificate. Start here.'},
+ {t:'Fortinet NSE 2 and NSE 3',ic:'shield',tier:'real',cost:0,voucher:'free self-paced courses',
+  u:'https://training.fortinet.com/local/staticpage/view.php?page=nse',when:'2026-10-03',
+  why:'Same free pathway continues. NSE 4 and above are proctored exams that cost real money, and the hands-on labs are sold separately.'},
+ {t:'TESDA Online Programs — free PH certificate',ic:'trophy',tier:'real',cost:0,voucher:'free, PH-issued certificate',
+  u:'https://e-tesda.gov.ph/',when:'2026-10-03',
+  why:'Verified live. Locally weighted much more heavily than an online badge. For PH job applications this counts for more than most vendor badges.'},
+ {t:'EC-Council free beginner courses with certificates',ic:'book',tier:'badge',cost:0,voucher:'free course, certificate on completion',
+  u:'https://www.eccouncil.org/cybersecurity-exchange/cyber-novice/free-cybersecurity-courses-beginners/',when:'2026-10-03',
+  why:'Verified live, page title confirms free courses with certificates. Beginner level, and it is a certificate of completion rather than a graded exam.'},
  {t:'Microsoft Learn — free security training and study guides',ic:'shield',tier:'badge',cost:0,voucher:'training and study guides are free, exams are not',
   u:'https://learn.microsoft.com/en-us/training/student-hub/credentials',when:'2026-10-03',
-  why:'Verified live. Student Hub lists free training, resources and assessments. Every SC-series study guide is free. The exam itself is not free.'},
- {t:'Exam SC-900 study guide — Microsoft Security, Compliance and Identity',ic:'book',tier:'badge',cost:0,voucher:'free study guide',
+  why:'Verified live. The SC-900 study guide is genuinely free. Microsoft has no free exam path: SC-900 is 99 USD and no funding page confirms a voucher.'},
+ {t:'Exam SC-900 study guide — free official study material',ic:'book',tier:'badge',cost:0,voucher:'free study guide',
   u:'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900',when:'2026-10-03',
-  why:'Verified live. Free official study guide for the entry-level fundamentals exam. Best value if you later sit SC-900.'},
- {t:'Introduction to Microsoft security solutions — free learning path',ic:'shield',tier:'badge',cost:0,voucher:'free training path',
-  u:'https://learn.microsoft.com/en-us/training/paths/describe-capabilities-of-microsoft-security-solutions/',when:'2026-10-03',
-  why:'Verified live. Free path covering Defender, Entra and Purview. Directly matches entry SOC job ads.'},
- {t:'Microsoft Certified: Fundamentals (cert family index)',ic:'network',tier:'real',cost:'paid',voucher:'exam is paid, training is free',
-  u:'https://learn.microsoft.com/en-us/credentials/certifications/fundamentals',when:'2026-10-03',
-  why:'Verified live index page. Use it to confirm what Microsoft credentials exist today; they renamed many in 2026.'},
+  why:'Verified live. Free official study guide. Do this before deciding whether the 99 USD exam is worth it for you.'},
  {t:'Azure for Students',ic:'cloud',tier:'badge',cost:0,voucher:'free account with credits, needs school email',
   u:'https://azure.microsoft.com/en-us/free/students',when:'2026-10-03',
   why:'Verified live. Free Azure credit so you can break your own account in a lab without billing anyone.'},
- {t:'Cisco Skills for All — Introduction to Cybersecurity',ic:'network',tier:'badge',cost:0,voucher:'free course plus digital badge',
+ {t:'PortSwigger Web Security Academy — now with LLM attack labs',ic:'globe',tier:'badge',cost:0,voucher:'free, browser based',
+  u:'https://portswigger.net/web-security/llm-attacks',when:'2026-10-03',
+  why:'Verified live. Prompt-injection labs are now mainstream material, not research oddities. Still the best free web security training that exists.'},
+ {t:'HackerOne Hacker101',ic:'flag',tier:'badge',cost:0,voucher:'free web security class',
+  u:'https://www.hackerone.com/hackers/hacker101',when:'2026-10-03',
+  why:'Free and vendor-run. Pairs with the bounty work in zone 5. Note the site blocks automated requests, so open it in a normal browser.'},
+ {t:'Cisco Skills for All — Ethical Hacker and Intro to Cybersecurity',ic:'network',tier:'badge',cost:0,voucher:'free course plus digital badge',
   u:'https://www.netacad.com/courses/introduction-to-cybersecurity',when:'2026-10-03',
-  why:'Verified live, page title confirms it is free. Not a cert, a verifiable badge. Cisco badges do appear on real resumes.'},
- {t:'Cisco Networking Academy — CCNA pathway',ic:'network',tier:'badge',cost:0,voucher:'free courses, paid exam only',
-  u:'https://www.netacad.com/',when:'2026-10-03',
-  why:'Forums put CCNA before Security+ for a true beginner. Do the free courses, sit the paid exam only if a job ad demands it.'},
- {t:'Google Cybersecurity Professional Certificate',ic:'shield',tier:'badge',cost:0,voucher:'Coursera audit is free, certificate is paid',
-  u:'https://www.coursera.org/professional-certificates/google-cybersecurity',when:'2026-10-03',
-  why:'Verified live. Strong brand recognition. Useful content in free audit mode; treat the certificate itself as optional.'},
- {t:'Professor Messer SY0-701 Security+ course',ic:'book',tier:'real',cost:0,voucher:'full course free, exam is paid',
-  u:'https://www.professormesser.com/security-plus/',when:'2026-10-03',
-  why:'Not a certificate, it is the free study material for Security+. Do this before booking any exam date.'},
- {t:'TryHackMe completion badges',ic:'terminal',tier:'badge',cost:0,voucher:'free on the free tier',
-  u:'https://tryhackme.com',when:'2026-10-03',
-  why:'Every room you finish issues a badge. Cheap proof of consistent practice, not a substitute for experience.'},
+  why:'Verified live, page title confirms free. Real prep for the CCST exam. Badges are weak signals, the content is not.'},
+ {t:'CyLab Security Academy (CMU)',ic:'cpu',tier:'badge',cost:0,voucher:'free labs and CTF, no public certificate',
+  u:'https://cylabacademy.org/',when:'2026-10-03',
+  why:'Verified live. Excellent free hands-on practice. No certificate advertised on public pages, so do not list it as a credential.'},
  {t:'CompTIA Security+ SY0-701',ic:'shield',tier:'real',cost:'paid',voucher:'about 400 USD, student discounts exist',
   u:'https://www.comptia.org/certifications/security',when:'2026-10-03',
-  why:'The cert a lot of PH SOC job ads filter on. Target it in Phase 5, never earlier.'}
+  why:'The cert a lot of PH SOC job ads filter on. Target it in Zone 5, never earlier.'},
+ {t:'ISC2 CC',ic:'shield',tier:'dead',cost:'paid',voucher:'free program closed 20 May 2026, exam 199 USD if bought direct',
+  u:'https://www.isc2.org/certifications/cc',when:'2026-10-03',
+  why:'Listed as a warning, not an option. The free One Million Certified program is closed and the paid exam is not cheap.'}
 ];
 function drawCreds(){
   const p=document.getElementById('pane-creds'); if(!p)return;
@@ -750,20 +756,23 @@ function drawCreds(){
       'that employers filter on. <b style="color:var(--gold)">BADGE</b> means a certificate of completion, useful as '+
       'evidence of practice but not a credential. Never write a badge as if it were a certification.</div>';
   CREDS.forEach(c=>{
-    const cls=c.tier==='real'?'green':(c.cost==='paid'?'':'gold');
+    const cls=c.tier==='dead'?'red':(c.tier==='real'?'green':'gold');
+    const tierLbl=c.tier==='dead'?'CLOSED':(c.tier==='real'?'REAL CERT':'BADGE');
+    const tierCls=c.tier==='dead'?'t-dead':(c.tier==='real'?'t-real':'t-badge');
     h+='<div class="cert '+cls+'"><div class="cico">'+ico(c.ic)+'</div><div class="cbody2">'+
       '<div class="ctitle">'+esc(c.t)+'</div>'+
       '<div class="cmeta">'+esc(c.why)+'</div>'+
       '<div class="cmeta" style="margin-top:5px;color:var(--gold)">'+esc(c.voucher)+'</div>'+
       '<div class="ctags">'+
-        '<span class="ctag '+(c.tier==='real'?'t-real':'t-badge')+'">'+(c.tier==='real'?'REAL CERT':'BADGE')+'</span>'+
+        '<span class="ctag '+tierCls+'">'+tierLbl+'</span>'+
         '<span class="ctag '+(c.cost==='paid'?'t-dead':'t-free')+'">'+(c.cost==='paid'?'PAID EXAM':'FREE')+'</span>'+
         '<span class="ctag t-badge">VERIFIED '+esc(c.when)+'</span>'+
       '</div></div>'+
       '<a class="cgo" href="'+c.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
   });
-  h+='<div class="hint" style="margin-top:10px">Dead options are not listed here. ISC2 CC is closed, CyberAces is retired, '+
-     'and picoCTF moved to cylabacademy.org. See the Stage Map intel panel for those corrections.</div>';
+  h+='<div class="hint" style="margin-top:10px">Best value right now is Fortinet NSE 1 to 3: genuinely free and a real vendor '+
+     'credential rather than a completion badge. For PH applications a TESDA certificate carries more weight than most '+
+     'online badges. The CLOSED row is there so you do not waste time chasing it.</div>';
   h+='</div></div>';
   p.innerHTML=h;
   p.querySelectorAll('[data-ic]').forEach(e=>{e.innerHTML=ico(e.dataset.ic);});
@@ -772,49 +781,76 @@ function drawCreds(){
 /* ============ INTEL / CURRENT EVENTS ============ */
 const INTEL={
  updated:'2026-10-03',
- events:[
-  {t:'US Cyber Challenge — Cyber Quests',w:'Registration open through 31 Oct 2026',free:true,
-   u:'https://www.uscyberchallenge.org/',why:'Free online CTF, open to non-US participants. Qualifier for their cyber camps.'},
-  {t:'CMU CyLab picoCTF yearly competition',w:'Usually opens late autumn',free:true,
-   u:'https://cylabacademy.org/',why:'Free beginner CTF from Carnegie Mellon. Moved here from the old play.picoctf.org.'},
-  {t:'Hack The Box free tier + Starting Point',w:'Always on, no deadline',free:true,
-   u:'https://app.hackthebox.com/',why:'Free machines are enough for Phase 0 through Phase 2. No need to pay early.'}
+ phEvents:[
+  {t:'BSides Manila 2026',w:'Sat 17 Oct 2026 · De La Salle Benilde, Manila',state:'reg closed',
+   u:'https://www.bsidesmanila.org/',why:'Community-priced PHP 300, single track, same-day CTF. Registration filled, but the Discord is where the next event gets announced.'},
+  {t:'BSides Manila Discord',w:'Open now',state:'join',
+   u:'https://discord.gg/PqPf2gcc',why:'The strongest live PH-specific community I could verify. This is the highest-value thing on this board for you.'},
+  {t:'Central Luzon CTF 2026',w:'Sat 14 Nov 2026 · Lipa City, Batangas, hybrid',state:'watch',
+   u:'https://www.facebook.com/DICT.Bulacan/posts/1425089202996351/',why:'Open to Region 3 students. Found via a DICT post only, so confirm the date on their page before travelling.'},
+  {t:'Cyber Security Summit Philippines, 37th edition',w:'17 Feb 2027 · Manila',state:'watch',
+   u:'https://exito-e.com/cybersecuritysummit/philippines/delegate-enquiry/',why:'Name recogniser rather than a cheap seat. It is aimed at enterprises, not priced for students.'},
+  {t:'OWASP Manila chapter',w:'No meetings scheduled right now',state:'join',
+   u:'https://owasp.org/www-chapter-manila/',why:'Free and open to anyone. Worth subscribing even with no meetings, because new ones get announced there first.'}
+ ],
+ freeEvents:[
+  {t:'OWASP Global Community Meetings',w:'Free, online, public',state:'open',
+   u:'https://owasp.org/www-community/meetings/',why:'Regular free talks on web app security. Always something scheduled.'},
+  {t:'SecureWorld Threat Defense Virtual Conference',w:'21 Oct 2026, online',state:'open',
+   u:'https://www.engagez.net/secureworld-threat-defense',why:'Free virtual. Notable for AI-abuse content from people who actually work on it.'},
+  {t:'SecurityWeek Virtual Summits',w:'Zero Trust 14 Oct · CISO 11 Nov · Cyber AI 8 Dec 2026',state:'open',
+   u:'https://www.securitysummits.com/',why:'Free tier, virtual. The December Cyber AI summit is the relevant one for you.'},
+  {t:'Cisco Live free global broadcast',w:'Next: Melbourne 9-12 Nov 2026, London Feb 2027',state:'open',
+   u:'https://www.ciscolive.com/global/faqs.html',why:'Cisco confirms a free global stream. Good free content while you are doing the NetAcad pathway.'},
+  {t:'DEF CON media archive',w:'30+ years of talks, free',state:'open',
+   u:'https://media.defcon.org/',why:'Free archive of every DEF CON talk ever. Conference itself is not free, roughly 560 USD.'}
  ],
  trends:[
-  {t:'Cloud identity and access control',k:'real',
-   why:'Access sprawl, not perimeter bugs, is what breaches now. IAM and permission review are the skills job ads ask for.'},
-  {t:'AI security and LLM red teaming',k:'real',
-   why:'Prompt injection and data leakage through models are now a real bug class. Cheap way in: build, then break, your own small model app.'},
-  {t:'Software supply chain and CI/CD security',k:'real',
-   why:'Dependency confusion and secret leakage in pipelines. Directly relevant to the open source tooling you already ship.'},
-  {t:'Post-quantum migration planning',k:'real',
-   why:'Harvest-now-decrypt-later makes this a board-level topic. A small module of crypto now saves a scramble later.'},
+  {t:'Exploiting unpatched software now beats stolen passwords',k:'real',
+   why:'Verizon 2026 DBIR: 31 percent of breaches start with exploiting a software vulnerability, overtaking credential theft. 48 percent involve ransomware. This is the strongest argument for a SOC job in 2026: patching and log analysis beat phishing awareness.'},
+  {t:'Machine identity and IAM',k:'real',
+   why:'The same report points at ungoverned non-human and machine identities. Learn Entra ID, IAM and secrets inventory. This is where job ads are pointing.'},
+  {t:'AI abuse detection and triage',k:'real',
+   why:'15 percent of attack techniques are now bolstered by generative AI. Realistic entry point for you is detecting AI-assisted abuse and Copilot triage workflows, not AI security engineering, which is senior-only.'},
+  {t:'Skills shortage is the top workforce complaint',k:'real',
+   why:'ISC2 2025 Workforce Study, 16,029 respondents: 88 percent had at least one significant consequence from a cyber skills shortage. That is why a self-taught entry path still gets hired.'},
+  {t:'Software supply chain security',k:'real',
+   why:'Dependency confusion and leaked secrets in pipelines. Directly relevant to the open source tooling you already ship.'},
+  {t:'Post-quantum migration',k:'hype',
+   why:'Real as long-term work but almost no junior SOC job volume attached. Useful as a literacy differentiator, not a career move.'},
   {t:'OT and ICS security',k:'hype',
-   why:'Real but heavily industrial. Worth awareness, not your first specialisation unless you target a plant or shipping operator.'}
+   why:'Genuinely important but heavily industrial. Awareness only unless you target a plant, refinery or shipping operator.'}
  ],
- communities:[
-  {t:'r/SecurityCareerAdvice',u:'https://www.reddit.com/r/SecurityCareerAdvice/',why:'Starters. Blunt answers about path and hiring.'},
-  {t:'r/netsec',u:'https://www.reddit.com/r/netsec/',why:'Networking fundamentals, the hardest part of zone 0.'},
-  {t:'r/careerguidance',u:'https://www.reddit.com/r/careerguidance/',why:'Career switching into security from other IT.'},
-  {t:'r/ITCareerQuestions',u:'https://www.reddit.com/r/ITCareerQuestions/',why:'Hunting, interviews, resume review.'},
-  {t:'HackTheBox subreddit',u:'https://www.reddit.com/r/hackthebox/',why:'Walkthroughs and machine chatter.'}
+ tools:[
+  {t:'Wazuh 4.14.5 stable, 5.0 in beta',u:'https://github.com/wazuh/wazuh',why:'The free SIEM most entry SOC jobs actually mention.'},
+  {t:'Zeek 8.2',u:'https://zeek.org/',why:'Free network security monitor. Encryption on by default now.'},
+  {t:'cybersectools.com free index',u:'https://cybersectools.com/free',why:'Directory of free and open source security tools.'},
+  {t:'Eric Zimmerman forensics tools',u:'https://www.ericzimmerman.com/',why:'Still the free DFIR standard. Tool list is behind the site menu now.'}
  ]
 };
 function drawIntel(){
   const p=document.getElementById('pane-intel'); if(!p)return;
   let h='<div class="panel blk"><div class="hd"><span class="ic" data-ic="radar"></span>'+
-    '<h2 style="margin:0">Intel</h2><span style="margin-left:auto" class="hint stamp">last checked '+INTEL.updated+'</span></div>'+
+    '<h2 style="margin:0">Intel</h2><span style="margin-left:auto" class="hint stamp">checked '+INTEL.updated+'</span></div>'+
     '<div class="dbody" style="padding:14px">';
 
-  h+='<div class="idead"><div class="hd">Open and free right now</div>';
-  INTEL.events.forEach(e=>{
-    h+='<div class="trend real" style="border-left-color:var(--grass);align-items:center">'+
-      '<div style="flex:1"><b>'+esc(e.t)+'</b><p>'+esc(e.w)+' &middot; '+esc(e.why)+'</p></div>'+
+  h+='<div class="idead"><div class="hd">Philippines, near you</div>';
+  INTEL.phEvents.forEach(e=>{
+    h+='<div class="trend" style="align-items:center"><div style="flex:1"><b>'+esc(e.t)+'</b>'+
+      '<p><b style="color:var(--gold)">'+esc(e.w)+'</b> &middot; '+esc(e.why)+'</p></div>'+
       '<a class="cgo" href="'+e.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
   });
-  h+='<div class="hint">Deadlines move. Treat dates as a prompt to re-check the page, not a guarantee.</div></div>';
+  h+='<div class="hint">Deadlines move. Treat dates as a prompt to re-check, not a guarantee.</div></div>';
 
-  h+='<div class="idead"><div class="hd">Skills employers actually want in 2026</div>';
+  h+='<div class="idead"><div class="hd">Free and open, anywhere</div>';
+  INTEL.freeEvents.forEach(e=>{
+    h+='<div class="trend real" style="border-left-color:var(--grass);align-items:center"><div style="flex:1"><b>'+esc(e.t)+'</b>'+
+      '<p><b style="color:var(--gold)">'+esc(e.w)+'</b> &middot; '+esc(e.why)+'</p></div>'+
+      '<a class="cgo" href="'+e.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
+  });
+  h+='</div>';
+
+  h+='<div class="idead"><div class="hd">What employers are actually hiring for in 2026</div>';
   INTEL.trends.forEach(t=>{
     h+='<div class="trend '+(t.k==='real'?'real':'hype')+'"><div style="flex:1">'+
       '<b>'+esc(t.t)+'</b> <span class="hypebar">'+(t.k==='real'?'HIRING FOR':'AWARENESS')+'</span>'+
@@ -822,26 +858,34 @@ function drawIntel(){
   });
   h+='</div>';
 
-  h+='<div class="idead"><div class="hd">Communities worth your time</div>';
-  INTEL.communities.forEach(c=>{
-    h+='<div class="trend" style="align-items:center"><div style="flex:1"><b>'+esc(c.t)+'</b><p>'+esc(c.why)+'</p></div>'+
-      '<a class="cgo" href="'+c.u+'" target="_blank" rel="noopener nofollow">OPEN</a></div>';
+  h+='<div class="idead"><div class="hd">Free tools worth knowing</div>'+
+    '<div class="row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:7px">';
+  INTEL.tools.forEach(t=>{
+    h+='<a class="trend" style="text-decoration:none;margin:0" href="'+t.u+'" target="_blank" rel="noopener nofollow">'+
+      '<div><b style="color:var(--gold)">'+esc(t.t)+'</b><p>'+esc(t.why)+'</p></div></a>';
   });
-  h+='</div>';
+  h+='</div></div>';
 
   h+='<div class="idead"><div class="hd">Corrections that break older roadmaps</div>'+
     '<div class="trend" style="border-left-color:var(--redstone)"><div><b>ISC2 CC free program</b>'+
-    '<p>CLOSED. The isc2.org page source reads "Program Closed". No new enrolments.</p></div></div>'+
-    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>cyberdefenders.com</b>'+
-    '<p>Parked spam page. The real site is cyberdefenders.org.</p></div></div>'+
-    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>CyberAces</b>'+
-    '<p>Retired June 2023. Use US Cyber Challenge instead.</p></div></div>'+
-    '<div class="trend" style="border-left-color:var(--gold)"><div><b>picoCTF</b>'+
-    '<p>Moved under CMU CyLab Security Academy at cylabacademy.org.</p></div></div>'+
-    '<div class="trend" style="border-left-color:var(--gold)"><div><b>Cloud Skills Boost</b>'+
-    '<p>Renamed to Google Skills at skills.google.</p></div></div>'+
-    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>practicalnetworking.com</b>'+
-    '<p>Parked domain with no content.</p></div></div></div>';
+    '<p>CLOSED. Enrolment ended 20 May 2026. The paid exam is 199 USD if bought direct. Do not chase this.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>Microsoft Defender Challenge</b>'+
+    '<p>Entry closed 21 Aug 2026, and it was only ever a 50 percent discount voucher, never free.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>Google GEAR Get Certified</b>'+
+    '<p>Now restricted to Google Cloud customers with corporate Workspace accounts. Students are ineligible.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--gold)"><div><b>Coursera audit mode</b>'+
+    '<p>Audit is preview only. The certificate itself needs payment or financial aid, so a "free certificate" claim is wrong.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>TryHackMe certificates</b>'+
+    '<p>Learning-path certificates are Premium only, from about 69 USD. The free tier is rooms, not certificates.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>CrowdStrike / Cloudflare / SentinelOne free certs</b>'+
+    '<p>Customer-gated or paid. Not accessible to a student, however they are advertised.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--gold)"><div><b>DEF CON and Black Hat are not free</b>'+
+    '<p>DEF CON 34 ran Aug 2026. DEF CON 35 is 5-8 Aug 2027. Badges run about 560 USD. Watch the free media archive instead.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--gold)"><div><b>CyberAces retired 2023</b>'+
+    '<p>Use US Cyber Challenge instead. picoCTF moved to cylabacademy.org. Cloud Skills Boost is now Google Skills.</p></div></div>'+
+    '<div class="trend" style="border-left-color:var(--redstone)"><div><b>cyberdefenders.com and practicalnetworking.com</b>'+
+    '<p>Both are parked domains. Real CyberDefenders is cyberdefenders.org.</p></div></div>'+
+    '</div>';
 
   h+='</div></div>';
   p.innerHTML=h;
