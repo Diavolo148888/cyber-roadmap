@@ -341,6 +341,7 @@ select,input[type=text]{
     <div>
       <div class="tabs" id="mainTabs">
         <div class="tab on" data-mv="map">Stage Map</div>
+        <div class="tab" data-mv="paths">SE Paths</div>
         <div class="tab" data-mv="creds">Credentials</div>
         <div class="tab" data-mv="intel">Intel</div>
         <div class="tab" data-mv="allres">All Links</div>
@@ -359,6 +360,7 @@ select,input[type=text]{
       </div>
       </div>
 
+      <div id="pane-paths" class="hidden"></div>
       <div id="pane-creds" class="hidden"></div>
       <div id="pane-intel" class="hidden"></div>
       <div id="pane-allres" class="hidden"></div>
@@ -443,6 +445,7 @@ select,input[type=text]{
 </div>
 
 <script src="tasks.js"></script>
+<script src="paths.js"></script>
 <script>
 /* ============ ICONS ============ */
 const P={
@@ -542,6 +545,8 @@ if(typeof S.done!=='object'||!S.done)S.done={};
 if(typeof S.res!=='object'||!S.res)S.res={};
 if(typeof S.notes!=='object'||!S.notes)S.notes={};
 if(typeof S.task!=='object'||!S.task||Array.isArray(S.task))S.task={};
+if(typeof S.path!=='object'||!S.path||Array.isArray(S.path))S.path={};
+if(typeof S.ptask!=='object'||!S.ptask||Array.isArray(S.ptask))S.ptask={};
 if(!Array.isArray(S.log))S.log=[];
 const save=()=>{S.last=new Date().toISOString(); try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 /* ---------- favicon for each resource tile ---------- */
@@ -702,7 +707,7 @@ function drawCoach(){
   }
   const m=M[i], z=Z[m.z];
   const tips=TIPS[m.id]||[];
-  const tasks=TASKS[m.id]||[];
+  const tasks=m._path?pathTasks(m.id):(TASKS[m.id]||[]);
   const st=taskState(m.id);
   const tDone=tasks.filter((_,k)=>st[k]).length;
   const nextT=tasks.findIndex((_,k)=>!st[k]);
@@ -968,12 +973,105 @@ function drawAllRes(){
   p.innerHTML=h;
 }
 
+/* ============ SECURITY ENGINEER PATHS ============ */
+/* Paths branch only after the shared core is cleared, so the SOC baseline
+   stays intact and nobody skips the fundamentals to reach a specialism.  */
+const CORE_IDS=['M0.1','M0.2','M0.3','M1.1','M1.2','M1.3','M2.1','M2.2','M2.3',
+                'M3.1','M3.2','M3.3'];
+function coreDone(){ return CORE_IDS.every(id=>S.done[id]); }
+function coreProgress(){
+  const d=CORE_IDS.filter(id=>S.done[id]).length;
+  return {d,total:CORE_IDS.length,pct:Math.round(d/CORE_IDS.length*100)};
+}
+function pStageState(pid,sid){
+  const key=pid+':'+sid;
+  if(typeof S.path!=='object'||!S.path)S.path={};
+  if(typeof S.path[key]!=='object'||!S.path[key])S.path[key]={};
+  return S.path[key];
+}
+function pUnlocked(pid,si){
+  if(!coreDone())return false;
+  if(si===0)return true;
+  const p=PATHS.find(x=>x.id===pid);
+  return !!pStageState(pid,p.stages[si-1].id)['done'];
+}
+function pTaskState(pid,sid){
+  const key=pid+':'+sid;
+  if(typeof S.ptask!=='object'||!S.ptask)S.ptask={};
+  if(typeof S.ptask[key]!=='object'||!S.ptask[key])S.ptask[key]={};
+  return S.ptask[key];
+}
+function drawPaths(){
+  const box=document.getElementById('pane-paths'); if(!box||typeof PATHS==='undefined')return;
+  const cp=coreProgress();
+  let h='<div class="card"><div class="head" style="background:#2a2210;border-bottom:3px solid #000;padding:10px 14px;font-family:var(--px);font-size:10px;color:var(--gold);letter-spacing:1px">SECURITY ENGINEER PATHS</div>'+
+    '<div class="body" style="padding:14px">';
+
+  if(!coreDone()){
+    h+='<div class="warnbox" style="border-left-color:var(--gold)">'+
+      '<b>Locked until the core is done.</b> These paths assume you can already read logs, a packet capture and a codebase. '+
+      'Clear the twelve core stages first &mdash; currently <b>'+cp.d+'/'+cp.total+'</b> ('+cp.pct+'%).</div>'+
+      '<div style="height:16px;background:#0c0c10;border:2px solid #000;margin:12px 0">'+
+      '<div style="height:100%;width:'+cp.pct+'%;background:repeating-linear-gradient(90deg,var(--grass) 0 8px,var(--grass-d) 8px 10px)"></div></div>';
+  } else {
+    h+='<div class="ok" style="border-left-color:var(--grass)">Core cleared. Every path below is open. '+
+      'Pick one to go deep, or work two if they overlap.</div>';
+  }
+
+  h+='<div class="row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:14px">';
+  PATHS.forEach(p=>{
+    const allStages=p.stages.map(s=>pStageState(p.id,s.id));
+    const doneN=p.stages.filter(s=>pStageState(p.id,s.id)['done']).length;
+    const pct=Math.round(doneN/p.stages.length*100);
+    h+='<div class="cert '+(doneN===p.stages.length?'green':'')+'" style="display:block;border-left-color:'+
+      (doneN===p.stages.length?'var(--grass)':'var(--diamond)')+'">'+
+      '<div class="cico" style="margin-bottom:7px">'+ico(p.icon)+'</div>'+
+      '<div class="ctitle">'+esc(p.name)+'</div>'+
+      '<div class="cmeta" style="color:var(--gold)">'+esc(p.role)+' &middot; '+p.stages.length+' stages &middot; '+p.hrs+'h</div>'+
+      '<div class="cmeta" style="margin-top:5px">'+esc(p.blurb)+'</div>'+
+      '<div class="ctags"><span class="ctag t-free">'+esc(p.skills.slice(0,2).join(' · '))+'</span></div>'+
+      '<div class="ctags"><span class="ctag '+(doneN?'t-real':'t-badge')+'">'+doneN+'/'+p.stages.length+' DONE</span>'+
+      '<span class="ctag t-badge">'+pct+'%</span></div>'+
+      '<div class="row" style="margin-top:9px">'+
+      p.stages.map((s,i)=>{
+        const sd=pStageState(p.id,s.id);
+        const open=coreDone()&&(i===0||pStageState(p.id,p.stages[i-1].id)['done']);
+        const cls=sd['done']?'t-real':(open?'t-soon':'t-badge');
+        return '<button type="button" class="btn sm" data-pstg="'+p.id+'|'+s.id+'" '+
+          (open?'':'disabled ')+'style="border-left:4px solid '+(sd['done']?'var(--grass)':open?'var(--gold)':'var(--stone)')+'">'+
+          (sd['done']?'✓ ':'')+esc(s.name)+'</button>';
+      }).join('')+
+      '</div></div>';
+  });
+  h+='</div>';
+  h+='<div class="hint" style="margin-top:12px">Paths do not change your existing progress. Core stages and path stages '+
+     'are tracked separately, and a path stage only unlocks once the one before it in that path is cleared.</div>';
+  h+='</div></div>';
+  box.innerHTML=h;
+  box.querySelectorAll('[data-pstg]').forEach(el=>{
+    el.onclick=()=>{ const [pid,sid]=el.dataset.pstg.split('|'); openPathStage(pid,sid); };
+  });
+}
+
+function openPathStage(pid,sid){
+  const p=PATHS.find(x=>x.id===pid);
+  const si=p.stages.findIndex(s=>s.id===sid);
+  if(si<0)return;
+  if(!pUnlocked(pid,si)){ toast('Clear the stage before it in this path first'); return; }
+  pathIdx={pid,si};
+  openStage(PATHS.length*1000+si, false, p.stages[si]);
+  drawRoom();
+}
+let pathIdx=null;
+window.drawPaths=drawPaths;
+window.openPathStage=openPathStage;
+
 function drawTabs(){
   document.querySelectorAll('#mainTabs .tab').forEach(t=>{
     t.onclick=()=>{
       document.querySelectorAll('#mainTabs .tab').forEach(x=>x.classList.remove('on'));
       t.classList.add('on');
-      ['map','creds','intel','allres'].forEach(v=>{
+      ['map','paths','creds','intel','allres'].forEach(v=>{
         const el=document.getElementById('pane-'+v);
         if(el)el.classList.toggle('hidden',v!==t.dataset.mv);
       });
@@ -994,12 +1092,14 @@ function drawLog(){
     '<span style="font-size:11.5px">'+e.x+'</span></div>').join('');
 }
 
-function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();drawCreds();drawIntel();drawAllRes();}
+function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();drawCreds();drawIntel();drawAllRes();drawPaths();}
 
 /* ============ STAGE MODAL (TryHackMe style room) ============ */
 let openIdx=-1, openTask=0;
 function taskState(id){
   if(typeof S.task!=='object'||!S.task||Array.isArray(S.task))S.task={};
+if(typeof S.path!=='object'||!S.path||Array.isArray(S.path))S.path={};
+if(typeof S.ptask!=='object'||!S.ptask||Array.isArray(S.ptask))S.ptask={};
   if(typeof S.task[id]!=='object'||!S.task[id]||Array.isArray(S.task[id]))S.task[id]={};
   return S.task[id];
 }
@@ -1027,24 +1127,53 @@ function toast(msg){
   clearTimeout(toast._h);
   toast._h=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(14px)';},2600);
 }
-function openStage(i,keepTask){
-  if(!isUnlocked(i)){
+/* Path stages use name/tasks/res; core stages use n/out/res and a TASKS lookup.
+   Normalise a path stage into the core shape so drawRoom needs no branching. */
+function normPathStage(s,pid){
+  return {
+    id:s.id, n:s.name, h:s.h, ic:(PATHS.find(p=>p.id===pid)||{}).icon||'shield',
+    out:(s.tasks||[]).map(t=>t.t),
+    res:(s.res||[]).map(r=>[r[0],r[1],r[2]]),
+    _path:true, _pid:pid
+  };
+}
+function currentPathStage(){
+  if(!pathIdx)return null;
+  const p=PATHS.find(x=>x.id===pathIdx.pid); if(!p)return null;
+  const s=p.stages[pathIdx.si]; if(!s)return null;
+  return normPathStage(s,p.id);
+}
+function pathTasks(sid){
+  let found=null;
+  PATHS.forEach(p=>p.stages.forEach(s=>{ if(s.id===sid) found=s.tasks; }));
+  return found||[];
+}
+function openStage(i,keepTask,overrideStage){
+  let m=overrideStage||M[i];
+  if(!m){return;}
+  if(!overrideStage && !isUnlocked(i)){
     const prev=M[i-1];
     toast('Clear '+prev.id+' '+prev.n+' first');
     return;
   }
-  openIdx=i; const m=M[i], d=document.getElementById('detail');
-  document.getElementById('mZone').textContent='ZONE '+m.z+' · '+Z[m.z].name;
-  document.getElementById('mTitle2').textContent=m.id+' '+m.n;
+  openIdx=i;
+  const d=document.getElementById('detail');
+  document.getElementById('mZone').textContent=overrideStage
+    ? 'PATH · '+(PATHS.find(p=>p.id===pathIdx.pid)||{}).name
+    : 'ZONE '+m.z+' · '+Z[m.z].name;
+  document.getElementById('mTitle2').textContent=m.id+' '+(m.n||m.name||'');
   document.getElementById('mIcon').innerHTML=ico(m.ic).replace('<svg','<svg width="26" height="26"');
-  const tasks=TASKS[m.id]||[];
+  const tasks=m._path?pathTasks(m.id):(TASKS[m.id]||[]);
   if(!keepTask) openTask=0;
   if(openTask>=tasks.length) openTask=Math.max(0,tasks.length-1);
   d.classList.add('on'); document.body.style.overflow='hidden';
   drawRoom();
 }
 function drawRoom(){
-  const m=M[openIdx], tasks=TASKS[m.id]||[], st=taskState(m.id);
+  const m=(M[openIdx]||currentPathStage());
+  if(!m)return;
+  const tasks=m._path?pathTasks(m.id):(TASKS[m.id]||[]);
+  const st=m._path?pTaskState(m._pid,m.id):taskState(m.id);
   const doneN=tasks.filter((_,k)=>st[k]).length;
 
   // left: task list
@@ -1085,14 +1214,28 @@ function drawRoom(){
     });
   }
 
-  const used=(t.r||[]).filter(k=>S.res[resKey(m,k)]).length;
-  if(t.r&&t.r.length){
-    R+='<h3 style="font-size:12px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin:16px 0 9px">Resources · '+used+'/'+t.r.length+'</h3><div class="rmres">';
-    t.r.forEach(k=>{
-      const rr=m.res[k]; if(!rr)return;
-      const isUsed=!!S.res[resKey(m,k)];
-      R+='<a class="rmreslink '+(isUsed?'used':'')+'" href="'+rr[1]+'" target="_blank" rel="noopener nofollow" data-res="'+k+'" title="'+esc(rr[0])+'">'+
-        fav(rr[1])+'<span>'+esc(rr[0])+'</span></a>';
+  // Core stages index res[] by position; path stages carry full URLs in t.r.
+  // Resolve both to {label,url} so the renderer does not care which is which.
+  const resFor=(t)=>{
+    const out=[];
+    (t.r||[]).forEach(k=>{
+      if(typeof k==='number'){ const rr=m.res[k]; if(rr)out.push({label:rr[0],url:rr[1],key:rr[1]}); }
+      else {
+        const rr=m.res.find(r=>r[1]===k);
+        const lbl=(t.rnames&&t.r[k])?t.r[k]:(rr?rr[0]:k);
+        out.push({label:lbl,url:k,key:k});
+      }
+    });
+    return out;
+  };
+  const rlist=resFor(t);
+  const used=rlist.filter(r=>S.res[r.key]).length;
+  if(rlist.length){
+    R+='<h3 style="font-size:12px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin:16px 0 9px">Resources &middot; '+used+'/'+rlist.length+'</h3><div class="rmres">';
+    rlist.forEach(r=>{
+      const isUsed=!!S.res[r.key];
+      R+='<a class="rmreslink '+(isUsed?'used':'')+'" href="'+r.url+'" target="_blank" rel="noopener nofollow" data-res="'+esc(r.key)+'" title="'+esc(r.label)+'">'+
+        fav(r.url)+'<span>'+esc(r.label)+'</span></a>';
     });
     R+='</div>';
   }
@@ -1132,17 +1275,23 @@ function drawRoom(){
     el.onclick=()=>{ const s=taskState(m.id); s[el.dataset.rev]=true; save(); drawRoom(); };
   });
   document.getElementById('rmMain').querySelectorAll('[data-res]').forEach(a=>{
-    a.onclick=()=>{ const key=resKey(m,+a.dataset.res); if(!S.res[key]){S.res[key]=true;save();} drawRoom(); drawMission(); drawDash(); };
+    a.onclick=()=>{ const key=a.dataset.res; if(!S.res[key]){S.res[key]=true;save();} drawRoom(); drawMission(); drawDash(); if(m._path)drawPaths(); };
   });
   const bd=document.getElementById('rmDone');
-  if(bd)bd.onclick=()=>{ const s=taskState(m.id); s[k]=!s[k];
-    if(!s[k])delete s[k];
-    if(S.done[m.id]&&!tasks.every((_,x)=>s[x])){delete S.done[m.id];}
-    save(); drawRoom(); drawMission(); drawDash(); };
+  if(bd)bd.onclick=()=>{
+    const s=m._path?pTaskState(m._pid,m.id):taskState(m.id);
+    s[k]=!s[k]; if(!s[k])delete s[k];
+    if(!m._path && S.done[m.id] && !tasks.every((_,x)=>s[x])) delete S.done[m.id];
+    if(m._path && pStageState(m._pid,m.id)['done'] && !tasks.every((_,x)=>s[x])) delete pStageState(m._pid,m.id)['done'];
+    save(); drawRoom(); drawMission(); drawDash(); if(m._path)drawPaths();
+  };
   const pv=document.getElementById('rmPrev'); if(pv)pv.onclick=()=>{openTask=Math.max(0,openTask-1);drawRoom();};
   const nx=document.getElementById('rmNext'); if(nx)nx.onclick=()=>{openTask=Math.min(tasks.length-1,openTask+1);drawRoom();};
   const os=document.getElementById('rmOpenStage');
-  if(os)os.onclick=()=>{ S.done[m.id]=false; save(); drawRoom(); drawMission(); drawDash(); };
+  if(os)os.onclick=()=>{
+    if(m._path) delete pStageState(m._pid,m.id)['done']; else S.done[m.id]=false;
+    save(); drawRoom(); drawMission(); drawDash(); if(m._path)drawPaths();
+  };
   const fn=document.getElementById('rmFinish');
   if(fn)fn.onclick=()=>{
     const left=tasks.filter((_,x)=>!st[x]).length;
@@ -1150,10 +1299,11 @@ function drawRoom(){
       toast(left+' task'+(left===1?'':'s')+' still open — finish them or reopen the stage later');
       return;
     }
-    S.done[m.id]=true;
+    if(m._path){ pStageState(m._pid,m.id)['done']=true; }
+    else { S.done[m.id]=true; }
     m.res.forEach((_,x)=>{S.res[resKey(m,x)]=true;});
     S.log.unshift({t:new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,5),x:'CLEARED '+m.id+' '+m.n});
-    save(); closeStage();
+    save(); closeStage(); if(m._path)drawPaths();
   };
 }
 function closeStage(){
@@ -1173,7 +1323,7 @@ document.getElementById('mNext').onclick=()=>{
 };
 document.getElementById('bReset').onclick=()=>{
   if(!confirm('Wipe all progress, cleared resources, notes and logbook on this device?'))return;
-  S={done:{},res:{},notes:{},log:[],task:{},last:null,streak:0,seen:null}; save(); render();
+  S={done:{},res:{},notes:{},log:[],task:{},path:{},ptask:{},last:null,streak:0,seen:null}; save(); render();
 };
 document.getElementById('bExport').onclick=()=>{
   const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
