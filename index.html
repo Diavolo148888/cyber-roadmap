@@ -158,9 +158,12 @@ header{
 .rmprog{padding:8px 12px;background:#1a1d24;border-bottom:2px solid #000;font-size:11px;color:var(--mute)}
 .rmprog b{color:var(--grass)}
 .rmtask{
-  display:flex;gap:9px;align-items:flex-start;padding:9px 11px;cursor:pointer;
-  background:#1a1d24;border-bottom:2px solid #14161b;border-left:4px solid transparent;
+  display:flex;gap:9px;align-items:flex-start;padding:9px 11px;cursor:pointer;width:100%;
+  background:#1a1d24;border:0;border-bottom:2px solid #14161b;border-left:4px solid transparent;
+  font:inherit;color:inherit;text-align:left;
 }
+.rmtask:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.rmtaskbody{flex:1;min-width:0;display:block}
 .rmtask:hover{background:#23262e}
 .rmtask.sel{background:#2a2410;border-left-color:var(--gold)}
 .rmtask.done{border-left-color:var(--grass)}
@@ -1045,15 +1048,17 @@ function drawRoom(){
   const doneN=tasks.filter((_,k)=>st[k]).length;
 
   // left: task list
-  let L='<div class="rmhead">Tasks</div>'+
-    '<div class="rmprog">'+doneN+' / '+tasks.length+' complete · '+(tasks.length?Math.round(doneN/tasks.length*100):0)+'%</div>';
+  let L='<div class="rmhead" id="rmListHead">Tasks</div>'+
+    '<div class="rmprog" id="rmProg" role="status" aria-live="polite">'+doneN+' / '+tasks.length+' complete · '+(tasks.length?Math.round(doneN/tasks.length*100):0)+'%</div>';
   tasks.forEach((t,k)=>{
-    L+='<div class="rmtask '+(k===openTask?'sel ':'')+(st[k]?'done':'')+'" data-t="'+k+'">'+
-      '<div class="rmnum">'+(st[k]?'✓':k+1)+'</div>'+
-      '<div style="flex:1;min-width:0"><div class="rmtt">'+esc(t.t)+'</div>'+
-      '<div class="rmdiff">'+[1,2,3,4,5].map(n=>'<i class="'+(n<=t.d?(n>=4?'h':'f'):'')+'"></i>').join('')+'</div>'+
+    L+='<button type="button" class="rmtask '+(k===openTask?'sel ':'')+(st[k]?'done':'')+'" data-t="'+k+'"'+
+      ' aria-current="'+(k===openTask?'true':'false')+'"'+
+      ' aria-label="Task '+(k+1)+' of '+tasks.length+': '+esc(t.t)+(st[k]?', completed':'')+'">'+
+      '<span class="rmnum" aria-hidden="true">'+(st[k]?'✓':k+1)+'</span>'+
+      '<span class="rmtaskbody"><span class="rmtt">'+esc(t.t)+'</span>'+
+      '<span class="rmdiff" aria-hidden="true">'+[1,2,3,4,5].map(n=>'<i class="'+(n<=t.d?(n>=4?'h':'f'):'')+'"></i>').join('')+'</span>'+
       (t.risk?'<span class="rmrisk">authorised targets only</span>':'')+
-      '</div></div>';
+      '</span></button>';
   });
   document.getElementById('rmList').innerHTML=L;
 
@@ -1104,9 +1109,25 @@ function drawRoom(){
   document.getElementById('rmMain').innerHTML=R;
 
   // wire it
-  document.getElementById('rmList').querySelectorAll('.rmtask').forEach(el=>{
+  const taskBtns=document.getElementById('rmList').querySelectorAll('.rmtask');
+  taskBtns.forEach(el=>{
     el.onclick=()=>{ openTask=+el.dataset.t; drawRoom(); };
   });
+  // arrow-key navigation, standard listbox behaviour
+  const listEl=document.getElementById('rmList');
+  listEl.onkeydown=(ev)=>{
+    let d=0;
+    if(ev.key==='ArrowDown'||ev.key==='ArrowRight')d=1;
+    else if(ev.key==='ArrowUp'||ev.key==='ArrowLeft')d=-1;
+    else if(ev.key==='Home')d=-openTask;
+    else if(ev.key==='End')d=tasks.length-1-openTask;
+    else return;
+    ev.preventDefault();
+    openTask=Math.max(0,Math.min(tasks.length-1,openTask+d));
+    drawRoom();
+    const nb=document.querySelector("#rmList .rmtask[data-t='"+openTask+"']");
+    if(nb)nb.focus();
+  };
   document.getElementById('rmMain').querySelectorAll('[data-rev]').forEach(el=>{
     el.onclick=()=>{ const s=taskState(m.id); s[el.dataset.rev]=true; save(); drawRoom(); };
   });
