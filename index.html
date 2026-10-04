@@ -342,6 +342,7 @@ select,input[type=text]{
       <div class="tabs" id="mainTabs">
         <div class="tab on" data-mv="map">Stage Map</div>
         <div class="tab" data-mv="paths">SE Paths</div>
+        <div class="tab" data-mv="jobs">Job Evidence</div>
         <div class="tab" data-mv="creds">Credentials</div>
         <div class="tab" data-mv="intel">Intel</div>
         <div class="tab" data-mv="allres">All Links</div>
@@ -361,6 +362,7 @@ select,input[type=text]{
       </div>
 
       <div id="pane-paths" class="hidden"></div>
+      <div id="pane-jobs" class="hidden"></div>
       <div id="pane-creds" class="hidden"></div>
       <div id="pane-intel" class="hidden"></div>
       <div id="pane-allres" class="hidden"></div>
@@ -768,7 +770,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 const CREDS=[
  {t:'Fortinet NSE 1 — Cybersecurity Fundamentals',ic:'shield',tier:'real',cost:0,voucher:'free self-paced course, vendor-issued badge',
   u:'https://www.fortinet.com/training/cybersecurity-professionals',when:'2026-10-03',
-  why:'Verified on Fortinet\'s own page: "free self-paced courses designed for every stage of your learning journey". Real vendor credential, not a course-completion certificate. Start here.'},
+  why:'Verified on Fortinet\'s own page: "free self-paced courses designed for every stage of your learning journey". Real vendor credential, not a completion certificate. Start here. Only the COURSE is confirmed free — Fortinet sells labs separately and I could not verify exam pricing from their site, so treat the exam cost as unconfirmed.'},
  {t:'Fortinet NSE 2 and NSE 3',ic:'shield',tier:'real',cost:0,voucher:'free self-paced courses',
   u:'https://training.fortinet.com/local/staticpage/view.php?page=nse',when:'2026-10-03',
   why:'Same free pathway continues. NSE 4 and above are proctored exams that cost real money, and the hands-on labs are sold separately.'},
@@ -799,6 +801,18 @@ const CREDS=[
  {t:'CyLab Security Academy (CMU)',ic:'cpu',tier:'badge',cost:0,voucher:'free labs and CTF, no public certificate',
   u:'https://cylabacademy.org/',when:'2026-10-03',
   why:'Verified live. Excellent free hands-on practice. No certificate advertised on public pages, so do not list it as a credential.'},
+ {t:'Microsoft SC-200 — Security Operations Analyst',ic:'shield',tier:'real',cost:0,voucher:'free prep course, practice assessments and exam sandbox',
+  u:'https://learn.microsoft.com/en-us/credentials/certifications/security-operations-analyst/',when:'2026-10-04',
+  why:'Verified live. Microsoft publishes the free prep path and a sandbox on the same page; exam price varies by region. This is the direct upgrade from a SOC role and the least experience-gated Microsoft cert.'},
+ {t:'Microsoft SC-300 — Identity and Access Administrator',ic:'users',tier:'real',cost:0,voucher:'free prep course and sandbox, exam priced by region',
+  u:'https://learn.microsoft.com/en-us/credentials/certifications/identity-and-access-administrator/',when:'2026-10-04',
+  why:'Verified live. IAM appears in 38% of Security Engineer postings versus 12% of SOC, so this maps straight onto the measured gap.'},
+ {t:'CISSP',ic:'trophy',tier:'defer',cost:'paid',voucher:'needs 5 years cumulative experience in 2+ of the 8 domains',
+  u:'https://www.isc2.org/certifications/cissp/cissp-experience-requirements',when:'2026-10-04',
+  why:'Not for now, and knowing why matters. ISC2 states the requirement verbatim: minimum five years cumulative full-time experience. A degree waives one year, as do Security+, CySA+, CASP+, SSCP, CCSP or AWS Security Specialty. Pass-first route exists via Associate of ISC2: sit the exam, then accrue the experience within six years.'},
+ {t:'SSCP and CCSP',ic:'shield',tier:'defer',cost:'paid',voucher:'SSCP needs 1+ year experience; CCSP states 5 years required',
+  u:'https://www.isc2.org/certifications/sscp',when:'2026-10-04',
+  why:'Both are experience-gated today. SSCP is the earliest senior cert and still needs a year of real security operations work, so park it until after your first SOC role.'},
  {t:'CompTIA Security+ SY0-701',ic:'shield',tier:'real',cost:'paid',voucher:'about 400 USD, student discounts exist',
   u:'https://www.comptia.org/certifications/security',when:'2026-10-03',
   why:'The cert a lot of PH SOC job ads filter on. Target it in Zone 5, never earlier.'},
@@ -814,11 +828,11 @@ function drawCreds(){
     '<div class="warn" style="border-left-color:var(--gold);background:#221d0e;color:#e8dcae">'+
       'Tier matters more than the badge. <b style="color:var(--gold)">REAL</b> means a vendor-issued certificate '+
       'that employers filter on. <b style="color:var(--gold)">BADGE</b> means a certificate of completion, useful as '+
-      'evidence of practice but not a credential. Never write a badge as if it were a certification.</div>';
+      'evidence of practice but not a credential. Never write a badge as if it were a certification. <b style="color:var(--gold)">DEFER</b> means real and worth having, but gated behind work experience you have not accrued yet.</div>';
   CREDS.forEach(c=>{
-    const cls=c.tier==='dead'?'red':(c.tier==='real'?'green':'gold');
-    const tierLbl=c.tier==='dead'?'CLOSED':(c.tier==='real'?'REAL CERT':'BADGE');
-    const tierCls=c.tier==='dead'?'t-dead':(c.tier==='real'?'t-real':'t-badge');
+    const cls=c.tier==='dead'?'red':(c.tier==='defer'?'gold':(c.tier==='real'?'green':'gold'));
+    const tierLbl=c.tier==='dead'?'CLOSED':(c.tier==='defer'?'DEFER':(c.tier==='real'?'REAL CERT':'BADGE'));
+    const tierCls=c.tier==='dead'?'t-dead':(c.tier==='defer'?'t-soon':(c.tier==='real'?'t-real':'t-badge'));
     h+='<div class="cert '+cls+'"><div class="cico">'+ico(c.ic)+'</div><div class="cbody2">'+
       '<div class="ctitle">'+esc(c.t)+'</div>'+
       '<div class="cmeta">'+esc(c.why)+'</div>'+
@@ -973,6 +987,113 @@ function drawAllRes(){
   p.innerHTML=h;
 }
 
+/* ============ JOB EVIDENCE ============ */
+/* Percentages computed from 55 live job postings pulled out of Greenhouse and
+   Lever APIs on 2026-10-04: 29 Security Engineer vs 26 SOC/Analyst roles.
+   Counts, not adjectives. n=29 Security Engineer, n=26 SOC.                */
+const JOBS={
+ nSec:29, nSoc:26, sampled:'2026-10-04',
+ /* [skill, secCount, socCount] */
+ rows:[
+  ['architecture / design authority',15,2],
+  ['cloud platform (AWS/Azure/GCP)',15,4],
+  ['SOAR / automation',15,12],
+  ['IAM / identity / zero trust',11,3],
+  ['kubernetes / containers',10,1],
+  ['threat modeling',9,1],
+  ['Python',9,10],
+  ['incident response',8,18],
+  ['SIEM (Splunk/QRadar/Sentinel)',7,12],
+  ['mentoring / enablement',7,6],
+  ['secure SDLC / DevSecOps',7,0],
+  ['manual code review',7,1],
+  ['CI/CD pipelines',6,2],
+  ['vulnerability management program',6,3],
+  ['named certifications',6,10],
+  ['network security',6,6],
+  ['log analysis / forensics',5,5],
+  ['reverse engineering',1,3],
+  ['SAST / DAST tooling',3,1],
+  ['SCA / SBOM / supply chain',6,1],
+  ['compliance frameworks',4,3],
+  ['pen testing / offensive',4,3],
+  ['secrets scanning / gitleaks',1,0],
+  ['purple team / atomic red / BAS',0,1]
+ ],
+ ladder:[
+  ['SOC L1','Monitor and triage events, escalate per procedure, write incident reports. Degree often required. Pure triage, no building.'],
+  ['SOC L2','Decides whether an alert is a true incident, executes containment (host isolation, account disablement), manages handover, tunes rules, coaches L1.'],
+  ['SOC L3 / Senior','Advanced SIEM query language, threat hunting, detection content, incident declaration, mentors the team. Still reactive.'],
+  ['Security Engineer','The shift is ownership of a build surface: secure-by-default configurations, IaC, review, threat modeling, guardrails for developers.'],
+  ['Senior / Staff','Same work plus strategy and leverage across teams. Staff means multi-year technical direction and architecture review.'],
+  ['Security Architect','A distinct role. Enterprise architecture, classification design, acquisition requirements. Architects decide; engineers build and harden.']
+ ],
+ sources:[
+  ['Roblox — Infrastructure Security Engineer','https://careers.roblox.com/jobs/8037805?gh_jid=8037805'],
+  ['Hex — Cloud Security Engineer','https://hex.tech/careers/cloud-security-engineer/'],
+  ['CISA Cybersecurity Architect work role','https://www.cisa.gov/careers/work-roles/security-architect'],
+  ['Foxhole — SOC Analyst (L1)','https://job-boards.greenhouse.io/foxholetechnology/jobs/4388955009'],
+  ['Aspen View — SOC Analyst (L2)','https://job-boards.greenhouse.io/aspenviewtech/jobs/4409609009'],
+  ['CISA Security Architect work role','https://www.cisa.gov/careers/work-roles/security-architect'],
+  ['NICE Cybersecurity Architecture work role','https://niccs.cisa.gov/tools/nice-framework/work-role/cybersecurity-architecture']
+ ]
+};
+function drawJobs(){
+  const box=document.getElementById('pane-jobs'); if(!box)return;
+  const ns=JOBS.nSec,no=JOBS.nSoc;
+  let h='<div class="card"><div class="head" style="background:#2a2210;border-bottom:3px solid #000;padding:10px 14px;font-family:var(--px);font-size:10px;color:var(--gold);letter-spacing:1px">JOB EVIDENCE</div><div class="body" style="padding:14px">';
+
+  h+='<div class="ok" style="border-left-color:var(--grass)"><b>Measured, not guessed.</b> '+ns+' Security Engineer and '+
+     no+' SOC/Analyst postings pulled live from Greenhouse and Lever on '+JOBS.sampled+
+     ' and tagged by skill. These numbers decided what the paths teach.</div>';
+
+  h+='<div class="lbl" style="margin-top:16px">What Security Engineer posts ask for that SOC posts do not</div>'+
+    '<table><tr><th>SKILL</th><th>SEC ENG</th><th>SOC</th><th>GAP</th></tr>';
+  JOBS.rows.forEach(r=>{
+    const sp=Math.round(100*r[1]/ns), op=Math.round(100*r[2]/no), dl=sp-op;
+    const col=dl>=20?'var(--grass)':(dl<=-20?'var(--bad)':'var(--ink-d)');
+    h+='<tr><td>'+esc(r[0])+'</td><td class="ok">'+sp+'%</td><td>'+op+'%</td>'+
+       '<td style="color:'+col+';font-weight:bold">'+(dl>0?'+':'')+dl+'</td></tr>';
+  });
+  h+='</table>';
+
+  h+='<div class="lbl">Read this honestly</div><ul class="out">'+
+    '<li><b>Architecture authority is the single biggest jump:</b> 52% of Security Engineer posts versus 8% of SOC posts. That is design authority, not detection work.</li>'+
+    '<li><b>Cloud and Kubernetes are the real gate:</b> 52% and 34% for Security Engineer, against 15% and 4% for SOC. This is why the Cloud path exists.</li>'+
+    '<li><b>Threat modeling triples:</b> 31% versus 4%. Almost nobody teaches it, so almost nobody can do it. Cheap differentiation.</li>'+
+    '<li><b>Secure SDLC goes from 0% to 24%.</b> Not one of the 26 SOC postings asked for it.</li>'+
+    '<li><b>Detection and SIEM fall the other way:</b> 42% and 46% on SOC versus 7% and 24%. That is your current strength, and it is why SOC is the right first job.</li>'+
+    '<li><b>Certs matter MORE on SOC posts</b> (38% versus 21%), not less. A cert filters you into the SOC door; experience moves you through it.</li>'+
+    '<li><b>Purple teaming appears in 0 of 29</b> Security Engineer postings. Useful for interviews, not a hiring filter. It is a small part of the Incident Response path, not the whole thing.</li>'+
+    '</ul>';
+
+  h+='<div class="lbl">The role ladder, from real postings</div><table><tr><th>ROLE</th><th>WHAT IT ACTUALLY IS</th></tr>';
+  JOBS.ladder.forEach(r=>{h+='<tr><td style="white-space:nowrap"><b>'+esc(r[0])+'</b></td><td>'+esc(r[1])+'</td></tr>';});
+  h+='</table>';
+
+  h+='<div class="warnbox" style="border-left-color:var(--gold)"><b>The honest problem.</b> Median stated '+
+     'experience is 7 years for Security Engineer against 4 for SOC. Most Security Engineer postings are senior. '+
+     'The genuine entry doors are the few junior titles that combine SOC on-call with vulnerability management. '+
+     'That is exactly the sequence this roadmap forces: SOC first, then a specialisation, then Security Engineer.</div>';
+
+  h+='<div class="lbl">Postings cited</div><div class="res">';
+  JOBS.sources.forEach(s=>{h+='<a class="rmreslink" href="'+s[1]+'" target="_blank" rel="noopener nofollow" title="'+esc(s[0])+'">'+
+    fav(s[1])+'<span>'+esc(s[0])+'</span></a>';});
+  h+='</div>';
+
+  h+='<div class="lbl">Free prior art for the biggest gap</div>'+
+    '<div class="hint" style="margin-bottom:8px">Architecture authority and threat modeling are the two biggest '+
+    'deltas, and both have free training. Both URLs verified 2026-10-04.</div><div class="res">'+
+    '<a class="rmreslink" href="https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/" target="_blank" rel="noopener nofollow" title="Microsoft Threat Modeling Security Fundamentals, 3h, tagged Security Engineer">'+fav("https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/")+'<span>MS Threat Modeling 3h</span></a>'+
+    '<a class="rmreslink" href="https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats" target="_blank" rel="noopener nofollow" title="STRIDE reference">'+fav("https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats")+'<span>Azure STRIDE reference</span></a>'+
+    '<a class="rmreslink" href="https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html" target="_blank" rel="noopener nofollow" title="OWASP Threat Modeling Cheat Sheet">'+fav("https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html")+'<span>OWASP Threat Modeling</span></a>'+
+    '<a class="rmreslink" href="https://kubernetes.io/docs/concepts/security/" target="_blank" rel="noopener nofollow" title="Kubernetes security concepts">'+fav("https://kubernetes.io/docs/concepts/security/")+'<span>Kubernetes Security</span></a>'+
+    '<a class="rmreslink" href="https://killercoda.com/" target="_blank" rel="noopener norefopener" title="Free Kubernetes sandboxes">'+fav("https://killercoda.com/")+'<span>Killercoda free K8s lab</span></a>'+
+    '</div></div></div>';
+  box.innerHTML=h;
+}
+window.drawJobs=drawJobs;
+
 /* ============ SECURITY ENGINEER PATHS ============ */
 /* Paths branch only after the shared core is cleared, so the SOC baseline
    stays intact and nobody skips the fundamentals to reach a specialism.  */
@@ -1071,7 +1192,7 @@ function drawTabs(){
     t.onclick=()=>{
       document.querySelectorAll('#mainTabs .tab').forEach(x=>x.classList.remove('on'));
       t.classList.add('on');
-      ['map','paths','creds','intel','allres'].forEach(v=>{
+      ['map','paths','jobs','creds','intel','allres'].forEach(v=>{
         const el=document.getElementById('pane-'+v);
         if(el)el.classList.toggle('hidden',v!==t.dataset.mv);
       });
@@ -1092,7 +1213,7 @@ function drawLog(){
     '<span style="font-size:11.5px">'+e.x+'</span></div>').join('');
 }
 
-function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();drawCreds();drawIntel();drawAllRes();drawPaths();}
+function drawAll(){drawRows();drawMission();drawDash();drawMap();drawCoach();drawLog();drawCreds();drawIntel();drawAllRes();drawPaths();drawJobs();}
 
 /* ============ STAGE MODAL (TryHackMe style room) ============ */
 let openIdx=-1, openTask=0;

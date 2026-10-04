@@ -1,7 +1,8 @@
 /* Security Engineer specialisation paths.
    A path unlocks only after the shared core (zones 0-3) is cleared.
-   Each stage carries tasks with per-task resource assignments (r/rnames).
-   res[] entries are [label, url, icon] and were HTTP-verified 2026-10-03. */
+   Tasks carry r[] (resource URLs) + rnames[] (matching labels).
+   res[] entries are [label, url, icon]; all URLs HTTP-verified 2026-10-04.
+   Weighting informed by 55 live job postings, 29 Security Engineer vs 26 SOC. */
 window.PATHS=[
  {
   "id": "appsec",
@@ -35,12 +36,21 @@ window.PATHS=[
        }
       ],
       "r": [
-       "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html"
+       "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
+       "https://cheatsheetseries.owasp.org/",
+       "https://owasp.org/www-project-top-ten/",
+       "https://csrc.nist.gov/pubs/sp/800/30/r1/final",
+       "https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/",
+       "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats"
       ],
       "p": 10,
       "rnames": [
        "OWASP Threat Modeling Cheat Sheet",
-       "OWASP Threat Modeling Cheat Sheet"
+       "OWASP Cheat Sheet Series",
+       "OWASP Top 10",
+       "NIST SP 800-30 Risk Assessment",
+       "MS Threat Modeling 3h",
+       "Azure STRIDE reference"
       ]
      },
      {
@@ -59,12 +69,20 @@ window.PATHS=[
       ],
       "r": [
        "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
-       "https://cheatsheetseries.owasp.org/"
+       "https://cheatsheetseries.owasp.org/",
+       "https://owasp.org/www-project-top-ten/",
+       "https://csrc.nist.gov/pubs/sp/800/30/r1/final",
+       "https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/",
+       "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats"
       ],
       "p": 20,
       "rnames": [
        "OWASP Cheat Sheet Series",
-       "OWASP Threat Modeling Cheat Sheet"
+       "OWASP Threat Modeling Cheat Sheet",
+       "OWASP Top 10",
+       "NIST SP 800-30 Risk Assessment",
+       "MS Threat Modeling 3h",
+       "Azure STRIDE reference"
       ]
      },
      {
@@ -79,13 +97,20 @@ window.PATHS=[
       ],
       "r": [
        "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
-       "https://owasp.org/www-project-top-ten/"
+       "https://owasp.org/www-project-top-ten/",
+       "https://cheatsheetseries.owasp.org/",
+       "https://csrc.nist.gov/pubs/sp/800/30/r1/final",
+       "https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/",
+       "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats"
       ],
       "p": 30,
       "rnames": [
        "OWASP Threat Modeling Cheat Sheet",
        "OWASP Threat Modeling Cheat Sheet",
-       "OWASP Top 10"
+       "OWASP Cheat Sheet Series",
+       "NIST SP 800-30 Risk Assessment",
+       "MS Threat Modeling 3h",
+       "Azure STRIDE reference"
       ]
      },
      {
@@ -99,11 +124,21 @@ window.PATHS=[
        }
       ],
       "r": [
-       "https://csrc.nist.gov/pubs/sp/800/30/r1/final"
+       "https://csrc.nist.gov/pubs/sp/800/30/r1/final",
+       "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
+       "https://cheatsheetseries.owasp.org/",
+       "https://owasp.org/www-project-top-ten/",
+       "https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/",
+       "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats"
       ],
       "p": 40,
       "rnames": [
-       "NIST SP 800-30 Risk Assessment"
+       "NIST SP 800-30 Risk Assessment",
+       "OWASP Threat Modeling Cheat Sheet",
+       "OWASP Cheat Sheet Series",
+       "OWASP Top 10",
+       "MS Threat Modeling 3h",
+       "Azure STRIDE reference"
       ]
      }
     ],
@@ -126,6 +161,16 @@ window.PATHS=[
      [
       "NIST SP 800-30 Risk Assessment",
       "https://csrc.nist.gov/pubs/sp/800/30/r1/final",
+      "book"
+     ],
+     [
+      "MS Threat Modeling 3h",
+      "https://learn.microsoft.com/en-us/training/paths/tm-threat-modeling-fundamentals/",
+      "shield"
+     ],
+     [
+      "Azure STRIDE reference",
+      "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats",
       "book"
      ]
     ]
@@ -373,11 +418,29 @@ window.PATHS=[
        }
       ],
       "r": [
-       "https://trivy.dev/"
+       "https://trivy.dev/",
+       "https://github.com/bridgecrewio/checkov",
+       "https://cheatsheetseries.owasp.org/",
+       "https://slsa.dev/",
+       "https://scorecard.dev/",
+       "https://kubernetes.io/docs/concepts/security/",
+       "https://openpolicyagent.org/",
+       "https://github.com/aquasecurity/kube-bench",
+       "https://killercoda.com/",
+       "https://falco.org/"
       ],
       "p": 20,
       "rnames": [
-       "Trivy"
+       "Trivy",
+       "Checkov",
+       "OWASP Cheat Sheets",
+       "SLSA",
+       "OpenSSF Scorecard",
+       "Kubernetes Security",
+       "OPA Gatekeeper",
+       "kube-bench",
+       "Free K8s sandbox",
+       "Falco"
       ]
      },
      {
@@ -392,12 +455,28 @@ window.PATHS=[
       ],
       "r": [
        "https://trivy.dev/",
-       "https://github.com/bridgecrewio/checkov"
+       "https://github.com/bridgecrewio/checkov",
+       "https://cheatsheetseries.owasp.org/",
+       "https://slsa.dev/",
+       "https://scorecard.dev/",
+       "https://kubernetes.io/docs/concepts/security/",
+       "https://openpolicyagent.org/",
+       "https://github.com/aquasecurity/kube-bench",
+       "https://killercoda.com/",
+       "https://falco.org/"
       ],
       "p": 30,
       "rnames": [
        "Trivy",
-       "Checkov"
+       "Checkov",
+       "OWASP Cheat Sheets",
+       "SLSA",
+       "OpenSSF Scorecard",
+       "Kubernetes Security",
+       "OPA Gatekeeper",
+       "kube-bench",
+       "Free K8s sandbox",
+       "Falco"
       ]
      },
      {
@@ -412,12 +491,28 @@ window.PATHS=[
       ],
       "r": [
        "https://github.com/bridgecrewio/checkov",
-       "https://cheatsheetseries.owasp.org/"
+       "https://cheatsheetseries.owasp.org/",
+       "https://trivy.dev/",
+       "https://slsa.dev/",
+       "https://scorecard.dev/",
+       "https://kubernetes.io/docs/concepts/security/",
+       "https://openpolicyagent.org/",
+       "https://github.com/aquasecurity/kube-bench",
+       "https://killercoda.com/",
+       "https://falco.org/"
       ],
       "p": 40,
       "rnames": [
        "Checkov",
-       "OWASP Cheat Sheets"
+       "OWASP Cheat Sheets",
+       "Trivy",
+       "SLSA",
+       "OpenSSF Scorecard",
+       "Kubernetes Security",
+       "OPA Gatekeeper",
+       "kube-bench",
+       "Free K8s sandbox",
+       "Falco"
       ]
      },
      {
@@ -432,12 +527,28 @@ window.PATHS=[
       ],
       "r": [
        "https://slsa.dev/",
-       "https://scorecard.dev/"
+       "https://scorecard.dev/",
+       "https://trivy.dev/",
+       "https://github.com/bridgecrewio/checkov",
+       "https://cheatsheetseries.owasp.org/",
+       "https://kubernetes.io/docs/concepts/security/",
+       "https://openpolicyagent.org/",
+       "https://github.com/aquasecurity/kube-bench",
+       "https://killercoda.com/",
+       "https://falco.org/"
       ],
       "p": 40,
       "rnames": [
        "SLSA",
-       "OpenSSF Scorecard"
+       "OpenSSF Scorecard",
+       "Trivy",
+       "Checkov",
+       "OWASP Cheat Sheets",
+       "Kubernetes Security",
+       "OPA Gatekeeper",
+       "kube-bench",
+       "Free K8s sandbox",
+       "Falco"
       ]
      }
     ],
@@ -466,6 +577,31 @@ window.PATHS=[
       "OpenSSF Scorecard",
       "https://scorecard.dev/",
       "shield"
+     ],
+     [
+      "Kubernetes Security",
+      "https://kubernetes.io/docs/concepts/security/",
+      "cog"
+     ],
+     [
+      "OPA Gatekeeper",
+      "https://openpolicyagent.org/",
+      "cog"
+     ],
+     [
+      "kube-bench",
+      "https://github.com/aquasecurity/kube-bench",
+      "book"
+     ],
+     [
+      "Free K8s sandbox",
+      "https://killercoda.com/",
+      "server"
+     ],
+     [
+      "Falco",
+      "https://falco.org/",
+      "radar"
      ]
     ]
    }
@@ -722,12 +858,22 @@ window.PATHS=[
       ],
       "r": [
        "https://attack.mitre.org/",
-       "https://docs.aws.amazon.com/"
+       "https://docs.aws.amazon.com/",
+       "https://cyberdefenders.org/",
+       "https://trivy.dev/",
+       "https://github.com/bridgecrewio/checkov",
+       "https://caldera.mitre.org/",
+       "https://github.com/projectdiscovery/nuclei"
       ],
       "p": 30,
       "rnames": [
        "MITRE ATT and CK",
-       "AWS Docs"
+       "AWS Docs",
+       "CyberDefenders",
+       "Trivy",
+       "Checkov",
+       "MITRE Caldera",
+       "nuclei"
       ]
      },
      {
@@ -742,12 +888,22 @@ window.PATHS=[
       ],
       "r": [
        "https://attack.mitre.org/",
-       "https://cyberdefenders.org/"
+       "https://cyberdefenders.org/",
+       "https://docs.aws.amazon.com/",
+       "https://trivy.dev/",
+       "https://github.com/bridgecrewio/checkov",
+       "https://caldera.mitre.org/",
+       "https://github.com/projectdiscovery/nuclei"
       ],
       "p": 40,
       "rnames": [
        "MITRE ATT and CK",
-       "CyberDefenders"
+       "CyberDefenders",
+       "AWS Docs",
+       "Trivy",
+       "Checkov",
+       "MITRE Caldera",
+       "nuclei"
       ]
      },
      {
@@ -761,11 +917,23 @@ window.PATHS=[
        }
       ],
       "r": [
-       "https://github.com/bridgecrewio/checkov"
+       "https://github.com/bridgecrewio/checkov",
+       "https://attack.mitre.org/",
+       "https://cyberdefenders.org/",
+       "https://docs.aws.amazon.com/",
+       "https://trivy.dev/",
+       "https://caldera.mitre.org/",
+       "https://github.com/projectdiscovery/nuclei"
       ],
       "p": 40,
       "rnames": [
-       "Checkov"
+       "Checkov",
+       "MITRE ATT and CK",
+       "CyberDefenders",
+       "AWS Docs",
+       "Trivy",
+       "MITRE Caldera",
+       "nuclei"
       ]
      },
      {
@@ -780,12 +948,22 @@ window.PATHS=[
       ],
       "r": [
        "https://attack.mitre.org/",
-       "https://trivy.dev/"
+       "https://trivy.dev/",
+       "https://cyberdefenders.org/",
+       "https://docs.aws.amazon.com/",
+       "https://github.com/bridgecrewio/checkov",
+       "https://caldera.mitre.org/",
+       "https://github.com/projectdiscovery/nuclei"
       ],
       "p": 40,
       "rnames": [
        "MITRE ATT and CK",
-       "Trivy"
+       "Trivy",
+       "CyberDefenders",
+       "AWS Docs",
+       "Checkov",
+       "MITRE Caldera",
+       "nuclei"
       ]
      }
     ],
@@ -814,6 +992,16 @@ window.PATHS=[
       "Checkov",
       "https://github.com/bridgecrewio/checkov",
       "cog"
+     ],
+     [
+      "MITRE Caldera",
+      "https://caldera.mitre.org/",
+      "sword"
+     ],
+     [
+      "nuclei",
+      "https://github.com/projectdiscovery/nuclei",
+      "search"
      ]
     ]
    }
@@ -852,12 +1040,22 @@ window.PATHS=[
       ],
       "r": [
        "https://cve.mitre.org/",
-       "https://www.first.org/cvss/"
+       "https://www.first.org/cvss/",
+       "https://practical-devops.com/",
+       "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+       "https://openvas.org/"
       ],
       "p": 20,
       "rnames": [
        "CVE Program",
-       "FIRST CVSS"
+       "FIRST CVSS",
+       "Practical DevOps",
+       "NIST SP 800-40 Rev 4",
+       "EPSS exploit score",
+       "CISA KEV catalog",
+       "OpenVAS"
       ]
      },
      {
@@ -872,12 +1070,22 @@ window.PATHS=[
       ],
       "r": [
        "https://www.first.org/cvss/",
-       "https://csrc.nist.gov/pubs/sp/800/40/r4/final"
+       "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
+       "https://cve.mitre.org/",
+       "https://practical-devops.com/",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+       "https://openvas.org/"
       ],
       "p": 30,
       "rnames": [
        "FIRST CVSS",
-       "NIST SP 800-40 Rev 4"
+       "NIST SP 800-40 Rev 4",
+       "CVE Program",
+       "Practical DevOps",
+       "EPSS exploit score",
+       "CISA KEV catalog",
+       "OpenVAS"
       ]
      },
      {
@@ -891,11 +1099,23 @@ window.PATHS=[
        }
       ],
       "r": [
-       "https://practical-devops.com/"
+       "https://practical-devops.com/",
+       "https://cve.mitre.org/",
+       "https://www.first.org/cvss/",
+       "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+       "https://openvas.org/"
       ],
       "p": 30,
       "rnames": [
-       "Practical DevOps"
+       "Practical DevOps",
+       "CVE Program",
+       "FIRST CVSS",
+       "NIST SP 800-40 Rev 4",
+       "EPSS exploit score",
+       "CISA KEV catalog",
+       "OpenVAS"
       ]
      },
      {
@@ -910,12 +1130,22 @@ window.PATHS=[
       ],
       "r": [
        "https://practical-devops.com/",
-       "https://csrc.nist.gov/pubs/sp/800/40/r4/final"
+       "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
+       "https://cve.mitre.org/",
+       "https://www.first.org/cvss/",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+       "https://openvas.org/"
       ],
       "p": 40,
       "rnames": [
        "Practical DevOps",
-       "NIST SP 800-40 Rev 4"
+       "NIST SP 800-40 Rev 4",
+       "CVE Program",
+       "FIRST CVSS",
+       "EPSS exploit score",
+       "CISA KEV catalog",
+       "OpenVAS"
       ]
      }
     ],
@@ -939,6 +1169,21 @@ window.PATHS=[
       "NIST SP 800-40 Rev 4",
       "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
       "book"
+     ],
+     [
+      "EPSS exploit score",
+      "https://www.first.org/epss",
+      "chart"
+     ],
+     [
+      "CISA KEV catalog",
+      "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "shield"
+     ],
+     [
+      "OpenVAS",
+      "https://openvas.org/",
+      "search"
      ]
     ]
    },
@@ -960,12 +1205,22 @@ window.PATHS=[
       ],
       "r": [
        "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
-       "https://opencve.io/"
+       "https://opencve.io/",
+       "https://www.first.org/cvss/",
+       "https://practical-devops.com/",
+       "https://cyberdefenders.org/",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
       ],
       "p": 30,
       "rnames": [
        "CyberMap",
-       "NIST SP 800-40 Rev 4"
+       "NIST SP 800-40 Rev 4",
+       "FIRST CVSS",
+       "Practical DevOps",
+       "CyberDefenders",
+       "EPSS exploit score",
+       "CISA KEV catalog"
       ]
      },
      {
@@ -979,11 +1234,23 @@ window.PATHS=[
        }
       ],
       "r": [
-       "https://opencve.io/"
+       "https://opencve.io/",
+       "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
+       "https://www.first.org/cvss/",
+       "https://practical-devops.com/",
+       "https://cyberdefenders.org/",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
       ],
       "p": 30,
       "rnames": [
-       "CyberMap"
+       "CyberMap",
+       "NIST SP 800-40 Rev 4",
+       "FIRST CVSS",
+       "Practical DevOps",
+       "CyberDefenders",
+       "EPSS exploit score",
+       "CISA KEV catalog"
       ]
      },
      {
@@ -998,12 +1265,22 @@ window.PATHS=[
       ],
       "r": [
        "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
-       "https://www.first.org/cvss/"
+       "https://www.first.org/cvss/",
+       "https://practical-devops.com/",
+       "https://opencve.io/",
+       "https://cyberdefenders.org/",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
       ],
       "p": 40,
       "rnames": [
        "NIST SP 800-40 Rev 4",
-       "FIRST CVSS"
+       "FIRST CVSS",
+       "Practical DevOps",
+       "CyberMap",
+       "CyberDefenders",
+       "EPSS exploit score",
+       "CISA KEV catalog"
       ]
      },
      {
@@ -1018,12 +1295,22 @@ window.PATHS=[
       ],
       "r": [
        "https://csrc.nist.gov/pubs/sp/800/40/r4/final",
-       "https://opencve.io/"
+       "https://opencve.io/",
+       "https://www.first.org/cvss/",
+       "https://practical-devops.com/",
+       "https://cyberdefenders.org/",
+       "https://www.first.org/epss",
+       "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
       ],
       "p": 40,
       "rnames": [
        "NIST SP 800-40 Rev 4",
-       "CyberMap"
+       "CyberMap",
+       "FIRST CVSS",
+       "Practical DevOps",
+       "CyberDefenders",
+       "EPSS exploit score",
+       "CISA KEV catalog"
       ]
      }
     ],
@@ -1052,6 +1339,16 @@ window.PATHS=[
       "CyberDefenders",
       "https://cyberdefenders.org/",
       "activity"
+     ],
+     [
+      "EPSS exploit score",
+      "https://www.first.org/epss",
+      "chart"
+     ],
+     [
+      "CISA KEV catalog",
+      "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "shield"
      ]
     ]
    },
