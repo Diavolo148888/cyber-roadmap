@@ -1,7 +1,7 @@
 /* Security Engineer specialisation paths.
    A path unlocks only after the shared core (zones 0-3) is cleared.
    Tasks carry r[] (resource URLs) + rnames[] (matching labels).
-   res[] entries are [label, url, icon]; all URLs HTTP-verified 2026-10-04.
+   res[] entries are [label, url, icon]; all URLs HTTP-verified 2026-10-27.
    Weighting informed by 55 live job postings, 29 Security Engineer vs 26 SOC. */
 window.PATHS=[
  {
@@ -893,7 +893,8 @@ window.PATHS=[
        "https://trivy.dev/",
        "https://github.com/bridgecrewio/checkov",
        "https://caldera.mitre.org/",
-       "https://github.com/projectdiscovery/nuclei"
+       "https://github.com/projectdiscovery/nuclei",
+       "https://learn.microsoft.com/en-us/training/paths/ai-security-fundamentals/"
       ],
       "p": 40,
       "rnames": [
@@ -903,7 +904,8 @@ window.PATHS=[
        "Trivy",
        "Checkov",
        "MITRE Caldera",
-       "nuclei"
+       "nuclei",
+       "MS AI Security Fundamentals"
       ]
      },
      {
@@ -1002,6 +1004,11 @@ window.PATHS=[
       "nuclei",
       "https://github.com/projectdiscovery/nuclei",
       "search"
+     ],
+     [
+      "MS AI Security Fundamentals",
+      "https://learn.microsoft.com/en-us/training/paths/ai-security-fundamentals/",
+      "cloud"
      ]
     ]
    }

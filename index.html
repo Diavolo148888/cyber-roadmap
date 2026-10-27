@@ -854,10 +854,10 @@ function drawCreds(){
 
 /* ============ INTEL / CURRENT EVENTS ============ */
 const INTEL={
- updated:'2026-10-04',
+ updated:'2026-10-27',
  phEvents:[
-  {t:'BSides Manila 2026',w:'Sat 17 Oct 2026 · Benilde, Manila · FULL',state:'reg closed',
-   u:'https://www.bsidesmanila.org/',why:'Confirmed at capacity, 120 attendees, no door sign-ups, waitlist only. The 12:30-5:30 PM track still has a same-day CTF. Watch their Discord for the next edition.'},
+  {t:'BSides Manila — next edition',w:'2026 was the inaugural edition; 2027 announced on Discord',state:'watch',
+   u:'https://www.bsidesmanila.org/',why:'The first edition filled at 120 attendees with no door sign-ups. Next date is announced on their Discord first, so join it rather than checking the page.'},
   {t:'BSides Manila Discord',w:'Open now',state:'join',
    u:'https://discord.gg/PqPf2gcc',why:'The strongest live PH-specific community I could verify. This is the highest-value thing on this board for you.'},
   {t:'Central Luzon CTF 2026',w:'Sat 14 Nov 2026 · Lipa City, Batangas, hybrid',state:'watch',
@@ -870,16 +870,20 @@ const INTEL={
  freeEvents:[
   {t:'OWASP Global Community Meetings',w:'Free, online, public',state:'open',
    u:'https://owasp.org/www-community/meetings/',why:'Regular free talks on web app security. Always something scheduled.'},
-  {t:'SecureWorld Threat Defense Virtual Conference',w:'21 Oct 2026, online',state:'open',
-   u:'https://www.engagez.net/secureworld-threat-defense',why:'Free virtual. Notable for AI-abuse content from people who actually work on it.'},
+  {t:'SecurityWeek Cyber AI Summit',w:'8 Dec 2026, virtual',state:'open',
+   u:'https://www.securitysummits.com/',why:'Free virtual summit on AI and automation, the most relevant one of the season for where SOC work is heading.'},
   {t:'SecurityWeek Virtual Summits',w:'Zero Trust 14 Oct · CISO 11 Nov · Cyber AI 8 Dec 2026',state:'open',
    u:'https://www.securitysummits.com/',why:'Free tier, virtual. The December Cyber AI summit is the relevant one for you.'},
-  {t:'Hack.lu CTF 2026',w:'23-25 Oct 2026 · Jeopardy',state:'open',
-   u:'https://ctftime.org/event/3207/',why:'One of the bigger autumn CTFs, verified live on CTFtime. Good phase-2 practice.'},
-  {t:'HITCON CTF 2026',w:'23-25 Oct 2026 · Jeopardy',state:'open',
-   u:'https://ctftime.org/event/3340/',why:'Harder tier. Worth reading the writeups even if you do not score.'},
   {t:'HKCERT CTF 2026 Qualifier',w:'6-7 Nov 2026 · Jeopardy, beginner friendly',state:'open',
-   u:'https://ctftime.org/event/3418/',why:'HKCERT deliberately includes easy categories, which makes it the best first CTF of this window.'},
+   u:'https://ctftime.org/event/3418/',why:'HKCERT deliberately includes easy categories, which makes it the best first CTF of this window. ID verified against the API.'},
+  {t:'SpookyCTF 2026',w:'6-8 Nov 2026 · Jeopardy',state:'open',
+   u:'https://ctftime.org/event/3339/',why:'Student-run and beginner friendly. Verified live on CTFtime.'},
+  {t:'WolvCTF 2026',w:'13-15 Nov 2026 · Jeopardy',state:'open',
+   u:'https://ctftime.org/event/3049/',why:'University of Michigan CTF with a wide beginner track. Verified live.'},
+  {t:'CSAW CTF Final Round 2026',w:'12-14 Nov 2026 · Jeopardy, harder tier',state:'open',
+   u:'https://ctftime.org/event/3410/',why:'One of the largest academic CTFs. Read the writeups afterwards even if you do not score.'},
+  {t:'GlacierCTF 2026',w:'20-21 Nov 2026 · Jeopardy',state:'open',
+   u:'https://ctftime.org/event/3337/',why:'Well regarded, harder tier. Good stretch target once the fundamentals are solid.'},
   {t:'Cisco Live free global broadcast',w:'Melbourne 9-12 Nov 2026, London Feb 2027',state:'open',
    u:'https://www.ciscolive.com/global/faqs.html',why:'Cisco confirms a free global stream. Good free content while you are doing the NetAcad pathway.'},
   {t:'DEF CON media archive',w:'30+ years of talks, free',state:'open',
@@ -961,7 +965,7 @@ function drawIntel(){
     '<div class="trend" style="border-left-color:var(--gold)"><div><b>Coursera audit mode</b>'+
     '<p>Audit is preview only. The certificate itself needs payment or financial aid, so a "free certificate" claim is wrong.</p></div></div>'+
     '<div class="trend" style="border-left-color:var(--redstone)"><div><b>TryHackMe certificates</b>'+
-    '<p>Learning-path certificates are Premium only. Verified 2026-10-04: Premium is 11.19 USD per month billed annually (18.11 monthly), MAX is 18.99 per month. Free tier is rooms only, with a 1 hour per day AttackBox limit.</p></div></div>'+
+    '<p>Learning-path certificates are Premium only. Verified 2026-10-27: Premium is 10.50 USD per month billed annually (16.99 monthly), MAX is 18.99 per month either way. Free tier is rooms only, with a 1 hour per day AttackBox limit.</p></div></div>'+
     '<div class="trend" style="border-left-color:var(--redstone)"><div><b>CrowdStrike / Cloudflare / SentinelOne free certs</b>'+
     '<p>Customer-gated or paid. Not accessible to a student, however they are advertised.</p></div></div>'+
     '<div class="trend" style="border-left-color:var(--gold)"><div><b>DEF CON and Black Hat are not free</b>'+
@@ -1191,7 +1195,8 @@ function openPathStage(pid,sid){
   if(si<0)return;
   if(!pUnlocked(pid,si)){ toast('Clear the stage before it in this path first'); return; }
   pathIdx={pid,si};
-  openStage(PATHS.length*1000+si, false, p.stages[si]);
+  // pass the NORMALISED stage so _path/_pid are set and drawRoom treats it as a path stage
+  openStage(PATHS.length*1000+si, false, normPathStage(p.stages[si],pid));
   drawRoom();
 }
 let pathIdx=null;
@@ -1302,7 +1307,9 @@ function openStage(i,keepTask,overrideStage){
   drawRoom();
 }
 function drawRoom(){
-  const m=(M[openIdx]||currentPathStage());
+  // for core stages M[openIdx] is right; for path stages openIdx is a synthetic
+  // index past the end of M, so currentPathStage() must win
+  const m=(pathIdx?currentPathStage():M[openIdx]);
   if(!m)return;
   const tasks=m._path?pathTasks(m.id):(TASKS[m.id]||[]);
   const st=m._path?pTaskState(m._pid,m.id):taskState(m.id);
